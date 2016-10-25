@@ -30,6 +30,8 @@ class main extends \finger\database\mysql
      */
     public $where = array();
 
+    public $order='a.inorder';
+
     /**
      * Fetched records
      * @var
@@ -428,7 +430,9 @@ class main extends \finger\database\mysql
             foreach ($this->where as $_where) {
                 $_sql .= ' AND a.' . $_where->getName() . '=:' . $_where->getName() . ' ';
             }
-            $_sql .= ' ORDER BY a.inorder ';
+            if ($this->order!='') {
+                $_sql .= ' ORDER BY '.$this->order.' ';
+            }
             $this->_sql = $_sql;
             $_prepare = $this->prepare($_sql);
             foreach ($this->where as $_where) {
