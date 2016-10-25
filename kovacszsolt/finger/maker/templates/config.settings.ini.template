@@ -1,0 +1,4 @@
+defaultmodule = {{defaultmodule}}
+defaultcontroller = root
+defaultaction = index
+defaultmethod = index

@@ -1,0 +1,4 @@
+hostname = '{{hostname}}'
+databasename = '{{databasename}}'
+username = '{{username}}'
+password = '{{password}}'
