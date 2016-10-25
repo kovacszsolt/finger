@@ -1,0 +1,67 @@
+<?php
+namespace site\admin\{{modulename}}\controller;
+
+use \model\{{modulename}}\content\table as table;
+use \model\{{modulename}}\content\record as record;
+//use \model\{{modulename}}\image\table as image;
+use \finger\request as request;
+
+class content extends \site\admin\main\controller
+{
+
+    public function install($createTable = true)
+    {
+        parent::install($createTable);
+        //$_image = new image();
+        //$_image->install($createTable);
+    }
+
+    public function __construct()
+    {
+        $this->table = new table();
+        parent::__construct();
+        $this->view->addValue('page.header', '{{modulename}} - title');
+    }
+
+    protected function formPostPre()
+    {
+        $_id = request::get('id', '0', request::NUMBER);
+        $_table = new table();
+        $_record = new record();
+        $_record->setTitle(request::get('title'));
+        $_record->setKeyname(request::get('keyname'));
+        $_record->setIntro(request::get('intro'));
+        $_record->setContent(request::get('content'));
+        if ($_id == 0) {
+            $_id = $_table->add($_record);
+        } else {
+            $_record->setID($_id);
+            $_table->update($_record);
+            if (request::get('inorderold') != request::get('inorder')) {
+                $_table->reorder($_id, request::get('inorder'));
+            }
+        }
+        //$this->saveImages('\model\{{modulename}}\image\table', '\model\{{modulename}}\image\record', $_id);
+    }
+
+
+    public function listjsonGet()
+    {
+        try {
+            $_records = $this->table->query();
+            $data = array();
+            foreach ($_records as $_record) {
+                $data[] = array(
+                    'id' => $_record->getId()
+                , 'title' => $_record->getTitle()
+                , 'inorder' => $_record->getInorder()
+                );
+            }
+            $this->view->renderJSON($data);
+        } catch (\Exception $e) {
+            print_r($e);
+            exit;
+        }
+    }
+
+}

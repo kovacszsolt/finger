@@ -1,0 +1,18 @@
+<?php $this->includeCommonFile('head.php'); ?>
+<?php $record = $this->getValue('record'); ?>
+    <div class="row">
+        <div class="col-md-12">
+            <form method="post">
+                <input type="hidden" name="id" value="<?= $record->getID(); ?>"/>
+                <?php //$this->includeTemplateFile('gallery.php'); ?>
+                <?php $this->includeTemplateFile('inorder.php'); ?>
+                <?php $this->_echoText('Cím', 'title', $record); ?>
+                <?php $this->_echoText('Kulcs', 'keyname', $record,false); ?>
+                <?php $this->_textArea('Leírás','intro',$record,false); ?>
+                <?php $this->_textEditor('Tartalom','content',$record,false); ?>
+                <button type="submit" class="btn btn-default">Mentés</button>
+            </form>
+
+        </div>
+    </div>
+<?php $this->includeCommonFile('end.php'); ?>

@@ -1,0 +1,14 @@
+<?php
+namespace site\admin\controller\{{modulename}};
+class index extends \finger\controller\main
+{
+    public function __construct()
+    {
+        parent::__construct();
+        $this->view->addValue('page.header', '{{modulename}}');
+    }
+    public function indexGet()
+    {
+        $this->render();
+    }
+}

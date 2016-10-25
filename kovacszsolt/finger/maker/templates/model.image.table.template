@@ -1,0 +1,10 @@
+<?php
+namespace model\{{modelname}}\image;
+class table extends \finger\model\image
+{
+    public $tableName = '{{modelname}}image';
+    public $className = __CLASS__;
+
+    protected $path='{{modelname}}';
+
+}

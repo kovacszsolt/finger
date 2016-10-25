@@ -1,0 +1,3 @@
+<?php include_once __DIR__ . '/../_common/head.php'; ?>
+    <p><?=$this->getValue('message'); ?> </p>
+<?php include_once __DIR__ . '/../_common/end.php'; ?>

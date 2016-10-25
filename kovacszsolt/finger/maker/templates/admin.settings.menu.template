@@ -1,0 +1,15 @@
+<?php
+namespace site\admin\{{modulename}}\settings;
+class menu
+{
+    public static function get()
+    {
+        $_return = array(
+            'title' => '{{modulename}} - title',
+            'action' => '/admin/{{modulename}}/content/list/',
+            'submenu' => array()
+        );
+        return $_return;
+    }
+
+}

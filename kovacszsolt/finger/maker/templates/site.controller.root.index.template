@@ -1,0 +1,12 @@
+<?php
+namespace site\{{name}}\root\controller;
+use \model\web\content\table as web;
+class index extends \finger\controller\main
+{
+    public function indexGet()
+    {
+        $_web = new web();
+        $this->view->addValue('webRecord', $_web->find(1));
+        $this->render();
+    }
+}
