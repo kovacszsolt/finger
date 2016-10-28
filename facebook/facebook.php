@@ -10,6 +10,8 @@ class facebook
     private $_helper;
     private $_session;
     private $_session_name = 'facebook_access_token';
+    private $ApplicationID;
+    private $SecretID;
 
     public function __construct($ApplicationID, $SecretID, $Host, $session)
     {
@@ -20,6 +22,8 @@ class facebook
             'app_secret' => $SecretID,
             'default_graph_version' => 'v2.4',
         ]);
+        $this->ApplicationID = $ApplicationID;
+        $this->SecretID = $SecretID;
         $this->_helper = $this->_facebookClass->getRedirectLoginHelper();
         $this->getAccessToken();
         if ($this->_accessToken != '') {
@@ -55,7 +59,8 @@ class facebook
         if (!is_null($this->_accessToken)) {
             $profile_request = $this->_facebookClass->get('/me?fields=name,first_name,last_name,email,birthday');
             $profile = $profile_request->getGraphNode()->asArray();
-            $_return = array('id' => $profile ['id'], 'name' => $profile ['name'], 'email' => $profile ['email']);
+            $_return = $profile ;
+            //$_return = array('id' => $profile ['id'], 'name' => $profile ['name'], 'email' => $profile ['email']);
 
 
         }
@@ -70,7 +75,8 @@ class facebook
         foreach ($profiles as $profile) {
             $return[] = array(
                 'id' => $profile['id'],
-                'name' => $profile['name']
+                'name' => $profile['name'],
+                'picture'=>$profile['picture']->getProperty('url')
             );
         }
         return $return;
@@ -80,10 +86,48 @@ class facebook
 
     public function getLoginURL($backURL = '/loginok/')
     {
-        $permissions = ['email,user_birthday,user_friends']; // optional
+        $permissions = ['email,user_birthday,user_friends,user_posts,publish_actions']; // optional
         $loginUrl = $this->_helper->getLoginUrl($this->_host . $backURL, $permissions);
         $helper = $this->_facebookClass->getRedirectLoginHelper();
         return $loginUrl;
     }
 
+
+    public function sendNotification()
+    {
+
+        $app_access_token = $this->ApplicationID . '|' . $this->SecretID;
+        $response = $this->_facebookClass->post('/10211041450140088/notifications', array(
+
+            'template' => 'You have received a new message.',
+
+            'href' => 'https://greenroom.dev'
+        ), $this->_accessToken);
+        print_r($response);
+        exit;
+    }
+
+    public function postToWall($url, $message)
+    {
+        $linkData = [
+            'link' => $this->_host.$url,
+            'message' => $message,
+        ];
+        $ret = $this->_facebookClass->post('/me/feed', $linkData, $this->_accessToken);
+    }
+
+    public function logout()
+    {
+        $this->_session->remove('facebook_access_token');
+        $this->_accessToken = '';
+    }
+
+    public function getPermissions()
+    {
+        $response = $this->_facebookClass->get('/me/permissions', $this->_accessToken);
+
+        $graphObject = $response->getGraphEdge();
+        print_r($graphObject);
+        exit;
+    }
 }
