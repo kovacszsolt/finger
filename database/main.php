@@ -30,6 +30,8 @@ class main extends \finger\database\mysql
      */
     public $where = array();
 
+    public $order = 'a.inorder';
+
     /**
      * Fetched records
      * @var
@@ -136,7 +138,7 @@ class main extends \finger\database\mysql
     public function install()
     {
 
-            parent::createtable($this->fields);
+        parent::createtable($this->fields);
 
     }
 
@@ -252,6 +254,7 @@ class main extends \finger\database\mysql
                 }
             }
             $_sql .= ' ,inorder ';
+            $_sql .= ' ,createhost ';
             $_sql .= ') VALUES(';
             $_fieldPos = 0;
             foreach ($this->fields as $_fieldName => $_fieldAttribs) {
@@ -263,6 +266,7 @@ class main extends \finger\database\mysql
                 }
             }
             $_sql .= ' ,:inorder ';
+            $_sql .= ' ,\'' . $_SERVER['REMOTE_ADDR'] . '\' ';
             $_sql .= ') ';
             $_prepare = $this->prepare($_sql);
             foreach ($this->fields as $_fieldName => $_fieldAttribs) {
@@ -382,11 +386,12 @@ class main extends \finger\database\mysql
      * @param $field
      * @param $parameter
      */
-    public function addWhere($field, $parameter)
+    public function addWhere($field, $parameter, $method = '=')
     {
         $_where = new \finger\database\where();
         $_where->setName($field);
         $_where->setParam($parameter);
+        $_where->setMethod($method);
         $this->where[] = $_where;
     }
 
@@ -426,15 +431,18 @@ class main extends \finger\database\mysql
             }
             $_sql .= ' WHERE 1=1 ';
             foreach ($this->where as $_where) {
-                $_sql .= ' AND a.' . $_where->getName() . '=:' . $_where->getName() . ' ';
+                $_sql .= ' AND a.' . $_where->getName() . $_where->getMethod() . ':' . $_where->getName() . ' ';
             }
-            $_sql .= ' ORDER BY a.inorder ';
+            if ($this->order != '') {
+                $_sql .= ' ORDER BY ' . $this->order . ' ';
+            }
             $this->_sql = $_sql;
             $_prepare = $this->prepare($_sql);
             foreach ($this->where as $_where) {
                 $this->_values[$_where->getName()] = $_where->getParam();
                 $_prepare->bindValue(':' . $_where->getName(), $_where->getParam());
             }
+            error_log(json_encode($_sql));
             $_prepare->execute();
             if ($_prepare->rowCount() > 0) {
                 $_classRecord = $this->_getClassName();
@@ -460,6 +468,7 @@ class main extends \finger\database\mysql
             }
             return $_records;
         } catch (\Exception $e) {
+            error_log($_sql);
             print_r($e);
             exit;
         }
@@ -615,8 +624,9 @@ class main extends \finger\database\mysql
     {
         storage::createZIPfromDir($dir, '_export' . DIRECTORY_SEPARATOR . $dir . '.zip');
     }
-    
-    public function getClassName() {
+
+    public function getClassName()
+    {
         return $this->className;
     }
 
