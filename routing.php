@@ -10,6 +10,12 @@ use \finger\session as session;
 class routing
 {
 
+    /**
+     * Detect language from URL
+     * http://sample.com/lang/en/ OR http://sample.com/lang/hu/
+     * @param $url
+     * @return mixed
+     */
     private static function detectLanguage($url)
     {
         $_configSettings = new config('settings');
@@ -27,16 +33,18 @@ class routing
         return $url;
     }
 
+    /**
+     * Find URL from routing
+     * @param $url
+     * @param string $param
+     * @return mixed
+     */
     public static function find($url,&$param='')
     {
-        //echo 'r';exit;
         $_url = self::detectLanguage($url);
         $_configRouting = new config('routing');
-        //$url=$_configRouting->get($url,$url);
-        //return $url;
         $_url = $_configRouting->get($url, NULL);
         if (is_null($_url)) {
-            $_like=array();
             foreach ($_configRouting->getAll() as $_routing_url=>$_routing) {
                 if (strpos($_routing_url,'/%')==true) {
                     $_main_url=substr($_routing_url,0,-1);
@@ -47,6 +55,7 @@ class routing
                 }
             }
         }
-        return $url;
+        $_url=(is_null($_url) ? $url : $_url);
+        return $_url;
     }
 }
