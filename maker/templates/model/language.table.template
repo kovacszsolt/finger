@@ -1,0 +1,31 @@
+<?php
+namespace model\{{modelname}}\language;
+
+/**
+ * {{modelname}} language Class table
+ * @package model\{{modelname}}\language
+ */
+class table extends \finger\model\language
+{
+    /**
+     * Table name
+     * @var string
+     */
+    public $tableName = '{{modelname}}language';
+
+    /**
+     * @var string
+     */
+    protected $className = __CLASS__;
+
+    /**
+     * Database fields
+     * @var array
+     */
+    public $fields = array(
+        'title' => array('type' => 'varchar(200)'),
+        'intro' => array('type' => 'longtext'),
+        'content' => array('type' => 'longtext'),
+    );
+
+}

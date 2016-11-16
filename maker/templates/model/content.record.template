@@ -1,0 +1,39 @@
+<?php
+namespace model\{{modelname}}\content;
+
+/**
+ * {{modelname}} record Class record
+ * @package model\{{modelname}}\content
+ */
+class record extends \finger\model\record
+{
+    /**
+     * this Class
+     * @var string
+     */
+    protected $className = __CLASS__;
+
+    /**
+     * Feautured
+     * @var int
+     */
+    protected $a_featured;
+
+    /**
+     * Title from Language
+     * @var string
+     */
+    protected $a_title;
+
+    /**
+     * Intro from Language
+     * @var string
+     */
+    protected $a_intro;
+
+    /**
+     * Content from Language
+     * @var string
+     */
+    protected $a_content;
+}

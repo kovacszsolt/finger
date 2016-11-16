@@ -1,0 +1,43 @@
+<?php
+namespace model\{{modelname}}\content;
+
+/**
+ * {{modelname}} Class table
+ * @package model\{{modelname}}\content
+ */
+class table extends \finger\model\table {
+
+    /**
+     * Table name
+     * @var string
+     */
+    public $tableName = '{{modelname}}';
+
+    /**
+     * Export tables
+     * @var array
+     */
+    protected $_export_tables = array(
+        '{{modelname}}',
+        '{{modelname}}image',
+        '{{modelname}}language',
+    );
+
+    /**
+     * this table
+     * @var string
+     */
+    public $className = __CLASS__;
+
+    /**
+     * Table fields
+     * @var array
+     */
+    public $fields = array(
+        'featured' => array('type' => 'int(10)'),
+        'title' => array('type' => 'varchar(200)'),
+        'intro' => array('type' => 'longtext'),
+        'content' => array('type' => 'longtext'),
+    );
+
+}

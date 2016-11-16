@@ -1,7 +1,0 @@
-<?php
-namespace model\{{modelname}}\image;
-class record extends \finger\model\imagerecord {
-
-    protected $path='{{modelname}}';
-
-}
