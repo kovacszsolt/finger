@@ -135,9 +135,13 @@ class render
         echo $echo;
     }
 
-    public function includeFile($file)
+    /**
+     * Include file to Template
+     * @param $file
+     * @param null $var local variable
+     */
+    public function includeFile($file,$var=NULL)
     {
-
         $_file = MAINPATH . '/../site/' . $_GET['_module'] . '/' . $file;
         include $_file;
     }
