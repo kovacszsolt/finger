@@ -13,6 +13,7 @@ class messenger
      * @var string
      */
     private $access_token;
+    private $sender;
 
     /**
      * messenger constructor.
@@ -21,6 +22,15 @@ class messenger
     public function __construct($access_token)
     {
         $this->access_token = $access_token;
+    }
+
+    /**
+     * Set Sender
+     * @param $sender string
+     */
+    public function setSender($sender)
+    {
+        $this->sender = $sender;
     }
 
     /**
@@ -38,7 +48,6 @@ class messenger
             )
         );
         $message = $this->createMessage($_message);
-        error_log(json_encode($message));
         $this->send($message);
     }
 
@@ -76,7 +85,6 @@ class messenger
             'text' => $text
         );
         $message = $this->createMessage($_message);
-        error_log(json_encode($message));
         $this->send($message);
     }
 
@@ -112,5 +120,6 @@ class messenger
         curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonDataEncoded);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
         $result = curl_exec($ch);
+        error_log('curl_result==='.$result);
     }
 }
