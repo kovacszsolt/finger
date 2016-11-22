@@ -1,6 +1,9 @@
 <?php
 namespace finger;
 
+use \finger\random as random;
+use \finger\request as request;
+
 /**
  * Session handler
  * @package finger
@@ -18,6 +21,47 @@ class session
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
         }
+    }
+
+    /**
+     * Create Form SSRF Token
+     */
+    public function createCSRFToken()
+    {
+        $this->setValue('form_csrf', random::hash(15));
+    }
+
+    /**
+     * Get CSRF Token value
+     * @return null
+     */
+    public function getCSRFToken()
+    {
+        return $this->getValue('form_csrf', NULL);
+    }
+
+    /**
+     * Check Form CSRF Token
+     * @return bool
+     */
+    public function checkCSRFToken()
+    {
+        $_form_csrf = self::getCSRFToken();
+        if (is_null($_form_csrf)) {
+            return false;
+        }
+        $_form_key_name = 'token_' . $_form_csrf;
+        $_request_token = request::get($_form_key_name, NULL);
+        if (is_null($_request_token)) {
+            $this->remove('form_csrf');
+            return false;
+        }
+        if ($_request_token != $_form_csrf) {
+            $this->remove('form_csrf');
+            return false;
+        }
+        $this->remove('form_csrf');
+        return true;
     }
 
     /**

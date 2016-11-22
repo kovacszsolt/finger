@@ -1,6 +1,5 @@
 <?php
 namespace finger;
-
 /**
  * Class request
  * @package finger
@@ -109,6 +108,15 @@ class request
     {
         $servername = $_SERVER['SERVER_NAME'];
         return $servername;
+    }
+
+    /**
+     * Get current client IP Address
+     * @return string
+     */
+    public static function getClientIPAddress()
+    {
+        return $_SERVER['REMOTE_ADDR'];
     }
 
     /**
