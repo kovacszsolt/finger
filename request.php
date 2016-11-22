@@ -7,9 +7,59 @@ namespace finger;
  */
 class request
 {
-    // Type Check
+    /**
+     * String type
+     */
     const STRING = 'string';
+
+    /**
+     * Number tyoe
+     */
     const NUMBER = 'number';
+
+    /**
+     * File type JPG
+     */
+    const FILE_TYPE_JPG = 'image/jpeg';
+
+    /**
+     * File type PNG
+     */
+    const FILE_TYPE_PNG = 'image/png';
+
+    /**
+     * File type GIF
+     */
+    const FILE_TYPE_GIF = 'image/gif';
+
+    /**
+     * $_FILES array
+     * check file mime type
+     * @param string $name
+     * @param bool $check
+     * @param null $allow
+     * @return null
+     */
+    public static function files($name, $check = false, $allow = NULL)
+    {
+        $_return = NULL;
+        if (isset($_FILES[$name])) {
+            $_files = $_FILES[$name];
+            $_return = $_files;
+            if ($check) {
+                foreach ($_files['tmp_name'] as $_file_id => $_file) {
+                    if (!is_null($allow)) {
+                        $_mime_content_type = mime_content_type($_files['tmp_name'][$_file_id]);
+                        if (!in_array($_mime_content_type, $allow)) {
+                            $_return = NULL;
+                        }
+                    }
+                }
+            }
+        }
+        return $_return;
+
+    }
 
     /**
      * Get $_GET and $_POST parameter
