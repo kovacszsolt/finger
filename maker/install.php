@@ -31,9 +31,9 @@ class install extends \finger\maker\main
             'password' => $databaseuserpassword
         );
         $_defaultmodule=strtolower(str_replace('.','',$name));
-        $this->createFile('config.database.ini.template', $vars, 'app/config/config.' . $name . '.database.ini');
-        $this->createFile('config.settings.ini.template', array('defaultmodule'=>$_defaultmodule), 'app/config/config.' . $name . '.settings.ini');
-        $this->createFile('site.controller.root.index.template',array('name'=>$_defaultmodule),'site/'.$_defaultmodule.'/root/controller/index.php');
+        $this->createFile('config'.DIRECTORY_SEPARATOR.'database.ini.template', $vars, 'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'config.' . $name . '.database.ini');
+        $this->createFile('config'.DIRECTORY_SEPARATOR.'settings.ini.template', array('defaultmodule'=>$_defaultmodule), 'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'config.' . $name . '.settings.ini');
+        $this->createFile('site'.DIRECTORY_SEPARATOR.'controller.root.index.template',array('name'=>$_defaultmodule),'site'.DIRECTORY_SEPARATOR.$_defaultmodule.DIRECTORY_SEPARATOR.'root'.DIRECTORY_SEPARATOR.'controller'.DIRECTORY_SEPARATOR.'index.php');
 
     }
 }

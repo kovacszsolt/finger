@@ -14,13 +14,8 @@ class database extends \finger\maker\main
         define('HTTP_HOST',$database);
         $_object = new users();
         $_object->install();
-        $_object = new language();
-        $_object->install();
         $_object = new web();
         $_object->install();
-        $_object = new language();
-        $_object->install();
-
     }
 }
 

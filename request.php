@@ -31,6 +31,16 @@ class request
      */
     const FILE_TYPE_GIF = 'image/gif';
 
+    public static function backPath($number)
+    {
+        $_return = '';
+        for ($i = 0; $i < $number; $i++) {
+            $_return .= DIRECTORY_SEPARATOR . '..';
+        }
+        $_return .= DIRECTORY_SEPARATOR;
+        return $_return;
+    }
+
     /**
      * $_FILES array
      * check file mime type

@@ -63,9 +63,9 @@ class main
      */
     protected function createFile($templateFileName, $variables, $targetFile)
     {
-        $_targetFile = $this->path . '/' . $targetFile;
-        $_templateFileName = __DIR__ . '/templates/' . $templateFileName;
-
+        $_targetFile = $this->path . DIRECTORY_SEPARATOR . $targetFile;
+        echo $_targetFile.PHP_EOL;
+        $_templateFileName = __DIR__ . DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR . $templateFileName;
         $_content = $this->getContent($variables, $_templateFileName);
         storage::createFile($_targetFile, $_content);
     }
