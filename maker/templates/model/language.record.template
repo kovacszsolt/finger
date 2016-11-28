@@ -12,23 +12,4 @@ class record extends \finger\model\languagerecord
      */
     protected $className = __CLASS__;
 
-    /**
-     * Title
-     * @var string
-     */
-    protected $a_title;
-
-    /**
-     * Intro
-     * @var string
-     */
-    protected $a_intro;
-
-    /**
-     * Content
-     * @var string
-     */
-    protected $a_content;
-
-
 }

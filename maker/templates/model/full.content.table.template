@@ -1,5 +1,4 @@
 <?php
-
 namespace model\{{modelname}}\content;
 
 /**
@@ -15,11 +14,13 @@ class table extends \finger\model\table {
     public $tableName = '{{modelname}}';
 
     /**
-    * Export tables
-    * @var array
-    */
+     * Export tables
+     * @var array
+     */
     protected $_export_tables = array(
-        '{{modelname}}'
+        '{{modelname}}',
+        '{{modelname}}image',
+        '{{modelname}}language',
     );
 
     /**
@@ -29,11 +30,11 @@ class table extends \finger\model\table {
     public $className = __CLASS__;
 
     /**
-    * Table fields
-    * @var array
-    */
+     * Table fields
+     * @var array
+     */
     public $fields = array(
-        'keyname' => array('type' => 'varchar(200)'),
+        'featured' => array('type' => 'int(10)'),
         'title' => array('type' => 'varchar(200)'),
         'intro' => array('type' => 'longtext'),
         'content' => array('type' => 'longtext'),
