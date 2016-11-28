@@ -13,6 +13,18 @@ class main extends \finger\database\mysql
 {
 
     /**
+     * inorder table field exists
+     * @var bool
+     */
+    private $_inorderField = true;
+
+    /**
+     * createdate table field exists
+     * @var bool
+     */
+    private $_createdateField = true;
+
+    /**
      * Export Path
      * @var string
      */
@@ -83,6 +95,25 @@ class main extends \finger\database\mysql
         $this->_exportPath = Storage::getStoragePath() . '/_export/';
         parent::__construct();
     }
+
+    /**
+     * Set Inorder fields exits
+     * @param bool $value
+     */
+    protected function setInorderField($value)
+    {
+        $this->_inorderField = $value;
+    }
+
+    /**
+     * Set Createdata fields exits
+     * @param bool $value
+     */
+    protected function setCreatedateField($value)
+    {
+        $this->_createdateField = $value;
+    }
+
 
     /**
      * Add Join to model
@@ -235,12 +266,14 @@ class main extends \finger\database\mysql
     {
         try {
             $_recordCount = $this->count();
-            if ($_recordCount != 0) {
-                $newOrder = 0;
-                $_sql = 'UPDATE ' . $this->tableName . ' ';
-                $_sql .= 'SET inorder=inorder+1 ';
-                $_sql .= 'WHERE inorder>=' . $record->getInorder() . ' ';
-                $this->runSQL($_sql);
+            if ($this->_inorderField) {
+                if ($_recordCount != 0) {
+                    $newOrder = 0;
+                    $_sql = 'UPDATE ' . $this->tableName . ' ';
+                    $_sql .= 'SET inorder=inorder+1 ';
+                    $_sql .= 'WHERE inorder>=' . $record->getInorder() . ' ';
+                    $this->runSQL($_sql);
+                }
             }
             $_fieldValues = array();
             $_sql = 'INSERT INTO ' . $this->tableName . '(';
@@ -253,7 +286,9 @@ class main extends \finger\database\mysql
                     $_sql .= ' ,' . $_fieldName . ' ';
                 }
             }
-            $_sql .= ' ,inorder ';
+            if ($this->_inorderField) {
+                $_sql .= ' ,inorder ';
+            }
             $_sql .= ' ,createhost ';
             $_sql .= ') VALUES(';
             $_fieldPos = 0;
@@ -265,7 +300,9 @@ class main extends \finger\database\mysql
                     $_sql .= ' ,:' . $_fieldName . ' ';
                 }
             }
-            $_sql .= ' ,:inorder ';
+            if ($this->_inorderField) {
+                $_sql .= ' ,:inorder ';
+            }
             $_sql .= ' ,\'' . $_SERVER['REMOTE_ADDR'] . '\' ';
             $_sql .= ') ';
             $_prepare = $this->prepare($_sql);
@@ -274,10 +311,12 @@ class main extends \finger\database\mysql
                 $_fieldValues[':' . $_fieldName] = $record->$_functionName();
                 $_prepare->bindValue(':' . $_fieldName, $record->$_functionName());
             }
-            if ($_recordCount == 0) {
-                $_prepare->bindValue(':inorder', 1);
-            } else {
-                $_prepare->bindValue(':inorder', $record->getInorder());
+            if ($this->_inorderField) {
+                if ($_recordCount == 0) {
+                    $_prepare->bindValue(':inorder', 1);
+                } else {
+                    $_prepare->bindValue(':inorder', $record->getInorder());
+                }
             }
 
 
@@ -322,29 +361,31 @@ class main extends \finger\database\mysql
      */
     public function reOrder($id, $newOrder)
     {
-        $_record = $this->find($id);
-        $oldOrder = $_record->getInorder();
-        if ($newOrder > $oldOrder) {
-            $_sql = 'UPDATE ' . $this->tableName . ' ';
-            $_sql .= 'SET inorder=inorder-1 ';
-            $_sql .= 'WHERE inorder<=' . $newOrder . ' ';
-            $_sql .= 'AND inorder>=' . $oldOrder . ' ';
-            $this->runSQL($_sql);
-            $_sql = 'UPDATE ' . $this->tableName . ' ';
-            $_sql .= 'SET inorder=' . $newOrder . ' ';
-            $_sql .= 'WHERE id=' . $id . ' ';
-            $this->runSQL($_sql);
-        } else {
-            $_sql = 'UPDATE ' . $this->tableName . ' ';
-            $_sql .= 'SET inorder=inorder+1 ';
-            $_sql .= 'WHERE inorder>=' . $newOrder . ' ';
-            $_sql .= 'AND inorder<=' . $oldOrder . ' ';
+        if ($this->_inorderField) {
+            $_record = $this->find($id);
+            $oldOrder = $_record->getInorder();
+            if ($newOrder > $oldOrder) {
+                $_sql = 'UPDATE ' . $this->tableName . ' ';
+                $_sql .= 'SET inorder=inorder-1 ';
+                $_sql .= 'WHERE inorder<=' . $newOrder . ' ';
+                $_sql .= 'AND inorder>=' . $oldOrder . ' ';
+                $this->runSQL($_sql);
+                $_sql = 'UPDATE ' . $this->tableName . ' ';
+                $_sql .= 'SET inorder=' . $newOrder . ' ';
+                $_sql .= 'WHERE id=' . $id . ' ';
+                $this->runSQL($_sql);
+            } else {
+                $_sql = 'UPDATE ' . $this->tableName . ' ';
+                $_sql .= 'SET inorder=inorder+1 ';
+                $_sql .= 'WHERE inorder>=' . $newOrder . ' ';
+                $_sql .= 'AND inorder<=' . $oldOrder . ' ';
 
-            $this->runSQL($_sql);
-            $_sql = 'UPDATE ' . $this->tableName . ' ';
-            $_sql .= 'SET inorder=' . $newOrder . ' ';
-            $_sql .= 'WHERE id=' . $id . ' ';
-            $this->runSQL($_sql);
+                $this->runSQL($_sql);
+                $_sql = 'UPDATE ' . $this->tableName . ' ';
+                $_sql .= 'SET inorder=' . $newOrder . ' ';
+                $_sql .= 'WHERE id=' . $id . ' ';
+                $this->runSQL($_sql);
+            }
         }
     }
 
@@ -366,11 +407,13 @@ class main extends \finger\database\mysql
             $_prepare->execute();
             $_return = true;
             $this->commit();
-            $this->beginTransaction();
-            $_sql = 'UPDATE ' . $this->tableName . ' ';
-            $_sql .= 'SET inorder=inorder-1 ';
-            $_sql .= 'WHERE inorder>' . $oldOrder . ' ';
-            $this->commit();
+            if ($this->_inorderField) {
+                $this->beginTransaction();
+                $_sql = 'UPDATE ' . $this->tableName . ' ';
+                $_sql .= 'SET inorder=inorder-1 ';
+                $_sql .= 'WHERE inorder>' . $oldOrder . ' ';
+                $this->commit();
+            }
             $this->runSQL($_sql);
 
         } catch (PDOExecption $e) {
@@ -407,8 +450,12 @@ class main extends \finger\database\mysql
         try {
             $_records = NULL;
             $_sql = 'SELECT  a.id AS a_id  ';
-            $_sql .= ' ,a.inorder AS a_inorder  ';
-            $_sql .= ' ,a.createdate AS a_createdate  ';
+            if ($this->_inorderField) {
+                $_sql .= ' ,a.inorder AS a_inorder  ';
+            }
+            if ($this->_createdateField) {
+                $_sql .= ' ,a.createdate AS a_createdate  ';
+            }
             foreach ($this->fields as $_fieldName => $_fieldAttrib) {
                 $_sql .= ' ,a.' . $_fieldName . ' AS a_' . $_fieldName . ' ';
             }
@@ -416,7 +463,9 @@ class main extends \finger\database\mysql
                 $_joinClassName = '\model\\' . $_join['table'] . '\content\table';
                 $_joinClass = new $_joinClassName();
                 $_sql .= ' ,' . chr($_join_id + 98) . '.id AS ' . chr($_join_id + 98) . '_id ';
-                $_sql .= ' ,' . chr($_join_id + 98) . '.inorder AS ' . chr($_join_id + 98) . '_inorder ';
+                if ($this->_inorderField) {
+                    $_sql .= ' ,' . chr($_join_id + 98) . '.inorder AS ' . chr($_join_id + 98) . '_inorder ';
+                }
                 foreach ($_joinClass->fields as $_joinFieldName => $_joinField) {
                     $_sql .= ' ,' . chr($_join_id + 98) . '.' . $_joinFieldName . ' AS ' . chr($_join_id + 98) . '_' . $_joinFieldName . ' ';
                 }
@@ -434,7 +483,9 @@ class main extends \finger\database\mysql
                 $_sql .= ' AND a.' . $_where->getName() . $_where->getMethod() . ':' . $_where->getName() . ' ';
             }
             if ($this->order != '') {
-                $_sql .= ' ORDER BY ' . $this->order . ' ';
+                if ($this->_inorderField) {
+                    $_sql .= ' ORDER BY ' . $this->order . ' ';
+                }
             }
             $this->_sql = $_sql;
             $_prepare = $this->prepare($_sql);
