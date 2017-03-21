@@ -44,7 +44,7 @@ class config
             echo 'HTTP_HOST not found!' . PHP_EOL;
             die();
         }
-        $_configFileName = MAINPATH . '/../app/config/config.' . $_HTTP_HOST . '.' . $this->type . '.ini';
+        $_configFileName = MAINPATH . DIRECTORY_SEPARATOR. '..'.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'config.' . $_HTTP_HOST . '.' . $this->type . '.ini';
         if (!is_file($_configFileName)) {
             echo 'no config file:' . $_configFileName;
             exit;
@@ -85,7 +85,7 @@ class config
         }
         return $_return;
     }
-    
+
     public function getAll() {
         return $this->data;
     }

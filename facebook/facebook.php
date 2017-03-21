@@ -20,7 +20,7 @@ class facebook
         $this->_facebookClass = new \Facebook\Facebook([
             'app_id' => $ApplicationID,
             'app_secret' => $SecretID,
-            'default_graph_version' => 'v2.4',
+            'default_graph_version' => 'v2.8',
         ]);
         $this->ApplicationID = $ApplicationID;
         $this->SecretID = $SecretID;
@@ -57,36 +57,18 @@ class facebook
     {
         $_return = NULL;
         if (!is_null($this->_accessToken)) {
-            $profile_request = $this->_facebookClass->get('/me?fields=name,first_name,last_name,email,birthday');
+            //$profile_request = $this->_facebookClass->get('/me?fields=name,first_name,last_name,email,birthday');
+            $profile_request = $this->_facebookClass->get('/me?fields=name,first_name,last_name');
             $profile = $profile_request->getGraphNode()->asArray();
-            $_return = $profile ;
-            //$_return = array('id' => $profile ['id'], 'name' => $profile ['name'], 'email' => $profile ['email']);
-
-
+            $_return = $profile;
         }
         return $_return;
     }
 
-    public function getFriends()
-    {
-        $profile_request = $this->_facebookClass->get('/me/taggable_friends?limit=1000');
-        $profiles = $profile_request->getGraphEdge();
-        $return = array();
-        foreach ($profiles as $profile) {
-            $return[] = array(
-                'id' => $profile['id'],
-                'name' => $profile['name'],
-                'picture'=>$profile['picture']->getProperty('url')
-            );
-        }
-        return $return;
-
-
-    }
-
     public function getLoginURL($backURL = '/loginok/')
     {
-        $permissions = ['email,user_birthday,user_friends,user_posts,publish_actions']; // optional
+        //$permissions = ['email,user_friends,user_posts,publish_actions']; // optional
+        $permissions = ['email']; // optional
         $loginUrl = $this->_helper->getLoginUrl($this->_host . $backURL, $permissions);
         $helper = $this->_facebookClass->getRedirectLoginHelper();
         return $loginUrl;
@@ -110,7 +92,7 @@ class facebook
     public function postToWall($url, $message)
     {
         $linkData = [
-            'link' => $this->_host.$url,
+            'link' => $this->_host . $url,
             'message' => $message,
         ];
         $ret = $this->_facebookClass->post('/me/feed', $linkData, $this->_accessToken);
@@ -130,4 +112,5 @@ class facebook
         print_r($graphObject);
         exit;
     }
+
 }

@@ -1,6 +1,0 @@
-<?php
-namespace model\{{modelname}}\content;
-class record extends \finger\model\record
-{
-    protected $className=__CLASS__;
-}

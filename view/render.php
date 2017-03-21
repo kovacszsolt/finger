@@ -1,6 +1,7 @@
 <?php
 namespace finger\view;
 
+use finger\request;
 use \finger\session as session;
 
 /**
@@ -134,10 +135,31 @@ class render
         echo $echo;
     }
 
-    public function includeFile($file) {
-
-        $_file=MAINPATH.'/../site/'.$_GET['_module'].'/'.$file;
+    /**
+     * Include file to Template
+     * @param $file
+     * @param null $var local variable
+     */
+    public function includeFile($file,$var=NULL)
+    {
+        $_file = MAINPATH . '/../site/' . $_GET['_module'] . '/' . $file;
         include $_file;
+    }
+
+    /**
+     * Facebook Share button
+     * @param $url
+     */
+    public function _facebookShare($url)
+    {
+        echo '
+    <div class="fb-share-button" data-href="' . request::getProtocol() . '://' . request::getServerName() . $url . '" 
+        data-layout="button_count" 
+        data-size="small" 
+        data-mobile-iframe="true">
+        <a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u='
+            . urlencode(request::getProtocol() . '://' . request::getServerName() . $url) . '">Megosztás</a></div>
+    ';
     }
 
 

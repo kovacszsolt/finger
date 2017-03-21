@@ -1,0 +1,17 @@
+<?php
+namespace model\{{modelname}}\image;
+
+/**
+ * {{modelname}} image Class record
+ * @package model\{{modelname}}\image
+ */
+class record extends \finger\model\imagerecord {
+
+    /**
+     * save folder name
+     * @var string
+     */
+    protected $path='{{modelname}}';
+    public $className = __CLASS__;
+
+}

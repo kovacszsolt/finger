@@ -1,0 +1,16 @@
+<?php
+namespace model\{{modelname}}\content;
+
+/**
+ * {{modelname}} record Class record
+ * @package model\{{modelname}}\content
+ */
+class record extends \finger\model\record
+{
+    /**
+     * this Class
+     * @var string
+     */
+    protected $className = __CLASS__;
+
+}

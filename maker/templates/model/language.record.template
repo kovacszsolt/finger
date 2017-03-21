@@ -1,0 +1,15 @@
+<?php
+namespace model\{{modelname}}\language;
+
+/**
+ * {{modelname}} language Class record
+ * @package model\{{modelname}}\language
+ */
+class record extends \finger\model\languagerecord
+{
+    /**
+     * @var string
+     */
+    protected $className = __CLASS__;
+
+}
