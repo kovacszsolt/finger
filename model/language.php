@@ -41,7 +41,6 @@ class language extends \finger\database\main {
 	}
 
 	public function add($record) {
-		//$_method='/'.$record->getLangcode().'/'.str_replace('language','',$this->tableName).'/';
 		$_urlTable=new urlTable();
 		$_urlRecord=new urlRecord();
 		$_urlRecord->setUrl($record->getUrl());
@@ -49,7 +48,7 @@ class language extends \finger\database\main {
 		$_urlid=$_urlTable->add($_urlRecord);
 		$record->setUrlid($_urlid);
 		$_id=parent::add($record);
-		$_method='/'.str_replace('language','',$this->tableName).'/content/'.$record->getLangcode().'/'.$_id.'/';
+		$_method=str_replace('language','',$this->tableName).'/content/index/'.$record->getLangcode().'/'.$_id.'/';
 		$_urlTable=new urlTable();
 		$_urlRecord=$_urlTable->find($_urlid);
 		$_urlRecord->setMethod($_method);

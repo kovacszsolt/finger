@@ -47,6 +47,9 @@ class server
 		if (substr($_return, 0,1) == '/') {
 			$_return =substr($_return,1);
 		}
+		if (substr($_return, -1) != '/') {
+			$_return .='/';
+		}
 		return $_return;
 	}
 
