@@ -41,11 +41,20 @@ class server
 		return $_return;
 	}
 
+
 	public static function uri(){
 		$_return = $_SERVER['REQUEST_URI'];
-		if (substr($_return, -1) == '/') {
-			$_return =substr($_return,1,-1);
+		if (substr($_return, 0,1) == '/') {
+			$_return =substr($_return,1);
 		}
+		if (substr($_return, -1) != '/') {
+			$_return .='/';
+		}
+		return $_return;
+	}
+
+	public static function method() {
+		$_return = ucfirst(strtolower($_SERVER['REQUEST_METHOD']));
 		return $_return;
 	}
 }
