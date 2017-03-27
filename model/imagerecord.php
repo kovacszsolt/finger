@@ -35,6 +35,12 @@ class imagerecord extends \finger\model\record
      */
     protected $a_extension;
 
+	/**
+	 * image size
+	 * @var
+	 */
+    protected $a_size;
+
     /**
      * image tmp path
      * @var

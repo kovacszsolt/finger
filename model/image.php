@@ -20,6 +20,7 @@ class image extends \finger\database\main
         'name' => array('type' => 'varchar(200)','update'=>true),
         'alt' => array('type' => 'varchar(200)','update'=>true),
         'extension' => array('type' => 'varchar(200)','update'=>false),
+	    'size' => array('type' => 'int(10)','update'=>true),
     );
 
     /**
