@@ -6,7 +6,6 @@
     "homepage": "https://github.com/kovacszsolt/finger",
     "license": "MIT",
     "require": {
-        "facebook/graph-sdk": "^5.4"
     },
     "authors": [
         {
