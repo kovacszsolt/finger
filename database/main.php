@@ -519,7 +519,6 @@ class main extends \finger\database\mysql
             }
             return $_records;
         } catch (\Exception $e) {
-            error_log($_sql);
             print_r($e);
             exit;
         }
