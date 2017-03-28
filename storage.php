@@ -126,11 +126,18 @@ class storage
 	 */
 	public static function getFile($fileName)
 	{
-
 		$_filename = self::getStoragePath();
-		$imginfo = getimagesize($_filename . $fileName);
+		$__filename = $_filename . $fileName;
+		if (!is_file($__filename)) {
+			$__filename = server::documentRoot() . '../storage/' . request::get('_module') . '/default.jpg';
+		}
+		$imginfo = getimagesize($__filename);
+		if (!is_array($imginfo)) {
+			$__filename = server::documentRoot() . '../storage/' . request::get('_module') . '/default.jpg';
+			$imginfo = getimagesize($__filename);
+		}
 		header('Content-type: ' . $imginfo['mime']);
-		readfile($_filename . $fileName);
+		readfile($__filename);
 		die();
 	}
 
