@@ -76,9 +76,13 @@ class language extends \finger\database\main
 	 */
 	public function add($record)
 	{
+		$_url = $record->getUrl();
+		if (substr($_url, -1) != '/') {
+			$_url .= '/';
+		}
 		$_urlTable = new urlTable();
 		$_urlRecord = new urlRecord();
-		$_urlRecord->setUrl($record->getUrl());
+		$_urlRecord->setUrl($_url);
 		$_urlid = $_urlTable->add($_urlRecord);
 		$record->setUrlid($_urlid);
 		$_id = parent::add($record);
