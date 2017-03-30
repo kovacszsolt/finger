@@ -40,10 +40,14 @@ class language extends \finger\database\main
 	 */
 	public function maxInorder()
 	{
+		$_return = 1;
 		$this->order = 'inorder DESC';
 		$_records = $this->query();
-		$_record = $_records[0];
-		return $_record->getInorder();
+		if (is_array($_records)) {
+			$_record = $_records[0];
+			$_return = $_record->getInorder();
+		}
+		return $_return;
 	}
 
 	/**
