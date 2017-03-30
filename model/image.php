@@ -35,10 +35,24 @@ class image extends \finger\database\main
 	 */
 	public function add($record)
 	{
+		$_filename = $record->getTmpFileName();
+		if (substr($record->getTmpFileName(), 0, 4) == 'http') {
+			storage::mkDir('tmp');
+			$_extension = (substr($record->getTmpFileName(), strrpos($record->getTmpFileName(), '.') + 1));
+			$record->setExtension($_extension);
+			$_id = parent::add($record);
+
+
+			$_fileData = storage::saveFileFromUrl($_filename, $this->path . DIRECTORY_SEPARATOR . $_id . '.' . $record->getExtension(), true);
+			$record->setSize($_fileData['size']);
+
+		} else {
+			$record->setSize(storage::sizeFile($_filename));
+			$_id = parent::add($record);
+			storage::saveFile($_filename, $this->path . DIRECTORY_SEPARATOR . $_id . '.' . $record->getExtension(), true);
+		}
 		//Get File size
-		$record->setSize(storage::sizeFile($record->getTmpFileName()));
-		$_id = parent::add($record);
-		storage::saveFile($record->getTmpFileName(), $this->path . DIRECTORY_SEPARATOR . $_id . '.' . $record->getExtension(), true);
+
 
 	}
 

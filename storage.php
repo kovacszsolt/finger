@@ -74,6 +74,47 @@ class storage
 	}
 
 	/**
+	 * Save Image from URL to localstorage
+	 * @param string $source
+	 * @param string $target
+	 * @return array
+	 */
+	public static function saveFileFromUrl($source, $target)
+	{
+		$_extension = (substr($source, strrpos($source, '.') + 1));
+		$_tmp_name = self::getStoragePath() . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'formurl' . \finger\server::host() . date('U') . '.' . $_extension;
+
+
+		$content = file_get_contents($source);
+//Store in the filesystem.
+		$fp = fopen($_tmp_name, "w");
+		fwrite($fp, $content);
+		fclose($fp);
+		$_tmp_size = filesize($_tmp_name);
+		$_return = array(
+			'extension' => $_extension,
+			'size' => $_tmp_size
+		);
+
+		self::saveFile($_tmp_name, $target);
+
+		self::remove($_tmp_name);
+		return $_return;
+	}
+
+	/**
+	 * Delete file
+	 * @param string $fileName
+	 */
+	public static function remove($fileName)
+	{
+
+		if (is_file($fileName)) {
+			unlink($fileName);
+		}
+	}
+
+	/**
 	 * Check file is exits
 	 * @param $filename
 	 * @return bool
