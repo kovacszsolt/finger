@@ -493,7 +493,6 @@ class main extends \finger\database\mysql
                 $this->_values[$_where->getName()] = $_where->getParam();
                 $_prepare->bindValue(':' . $_where->getName(), $_where->getParam());
             }
-            error_log(json_encode($_sql));
             $_prepare->execute();
             if ($_prepare->rowCount() > 0) {
                 $_classRecord = $this->_getClassName();
