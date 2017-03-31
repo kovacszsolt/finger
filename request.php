@@ -1,4 +1,5 @@
 <?php
+
 namespace finger;
 /**
  * Class request
@@ -92,15 +93,18 @@ class request
 
 	/**
 	 * Get $_GET and $_POST parameter
-	 * @param $name
+	 * @param string $name
 	 * @param string $default
 	 * @param string $type
 	 * @return int|string
 	 */
-	public static function get($name, $default = '', $type = request::STRING)
+	public static function get($name = '', $default = '', $type = request::STRING)
 	{
 		$_tmp_request = array_merge($_GET, $_POST);
 		$_return = $default;
+		if ($name == '') {
+			return $_tmp_request;
+		}
 		if (isset($_tmp_request[$name])) {
 			$_return = $_tmp_request[$name];
 		}

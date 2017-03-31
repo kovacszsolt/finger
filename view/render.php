@@ -4,6 +4,7 @@ namespace finger\view;
 use finger\request;
 use \finger\session as session;
 use \finger\server;
+use \finger\config as config;
 
 /**
  * Template render Class
@@ -36,11 +37,15 @@ class render
 	 */
 	private $file;
 
+	protected $settings;
+
 	/**
 	 * render constructor.
 	 */
 	public function __construct()
 	{
+		$_configClass = new config('settings');
+		$this->settings = $_configClass;
 		$this->session = new session();
 		$this->file = NULL;
 	}
