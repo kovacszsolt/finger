@@ -1,4 +1,5 @@
 <?php
+
 namespace finger;
 /**
  * Class request
@@ -92,15 +93,18 @@ class request
 
 	/**
 	 * Get $_GET and $_POST parameter
-	 * @param $name
+	 * @param string $name
 	 * @param string $default
 	 * @param string $type
 	 * @return int|string
 	 */
-	public static function get($name, $default = '', $type = request::STRING)
+	public static function get($name = '', $default = '', $type = request::STRING)
 	{
 		$_tmp_request = array_merge($_GET, $_POST);
 		$_return = $default;
+		if ($name == '') {
+			return $_tmp_request;
+		}
 		if (isset($_tmp_request[$name])) {
 			$_return = $_tmp_request[$name];
 		}
@@ -116,7 +120,7 @@ class request
 	 * return Current URL
 	 * @return mixed
 	 */
-	public static function currentURL()
+	public static function _currentURL()
 	{
 		return $_SERVER['REQUEST_URI'];
 	}
@@ -125,7 +129,7 @@ class request
 	 * Get Current URL with host name
 	 * @return string
 	 */
-	public static function currentFullURL()
+	public static function _currentFullURL()
 	{
 		return self::getProtocol() . '://' . self::getServerName() . self::currentURL();
 	}
@@ -134,7 +138,7 @@ class request
 	 * Get Current Server Name
 	 * @return mixed
 	 */
-	public static function getServerName()
+	public static function _getServerName()
 	{
 		$servername = $_SERVER['SERVER_NAME'];
 		return $servername;
@@ -144,7 +148,7 @@ class request
 	 * Get current client IP Address
 	 * @return string
 	 */
-	public static function getClientIPAddress()
+	public static function _getClientIPAddress()
 	{
 		return $_SERVER['REMOTE_ADDR'];
 	}
@@ -153,7 +157,7 @@ class request
 	 * get Current Protocol
 	 * @return string
 	 */
-	public static function getProtocol()
+	public static function _getProtocol()
 	{
 		$protocol = 'http';
 		if ((isset($_SERVER['HTTPS'])) && ($_SERVER['HTTPS'] == 'on')) {
