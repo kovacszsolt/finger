@@ -64,10 +64,31 @@ class image extends \finger\database\main
 	public function delete($id)
 	{
 		$_record = $this->find($id);
-		//print_r($_record);exit;
 		storage::removeFile($this->path . DIRECTORY_SEPARATOR . $_record->getID() . '.' . $_record->getExtension());
-
 		return parent::delete($id);
+	}
+
+	/**
+	 * Delete from rootid
+	 * @param $rootid
+	 */
+	public function deleteRoot($rootid)
+	{
+		foreach ($this->findRootid($rootid) as $record) {
+			$this->delete($record->getId());
+		}
+	}
+
+	/**
+	 * Find by rootid
+	 * @param $rootid
+	 * @return array|null
+	 */
+	public function findRootid($rootid)
+	{
+		$this->addWhere('rootid', $rootid);
+		$_records = $this->query();
+		return $_records;
 	}
 
 
