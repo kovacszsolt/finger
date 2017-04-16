@@ -74,6 +74,13 @@ class config
 		$_return = $default;
 		if (isset($this->data[$name])) {
 			$_return = $this->data[$name];
+		} else {
+			if (strpos($name,'.')>0) {
+				$_arrayName=substr($name,0,strpos($name,'.'));
+				if (isset($this->data[$_arrayName][substr($name,strpos($name,'.')+1)])) {
+					$_return = $this->data[$_arrayName][substr($name,strpos($name,'.')+1)];
+				}
+			}
 		}
 		return $_return;
 	}
