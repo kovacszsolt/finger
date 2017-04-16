@@ -14,18 +14,22 @@ class mysql extends \PDO
     /**
      * mysql constructor.
      */
-    public function __construct()
-    {
-        try {
-            $_config = new config('database');
-            parent::__construct("mysql:host=" . $_config->hostname . ";dbname=" . $_config->databasename, $_config->username, $_config->password);
-        } catch (\Exception $e) {
-            echo 'Database error:' . PHP_EOL;
-            echo 'error code:' . $e->getCode() . PHP_EOL;
-            echo 'error message:' . $e->getMessage() . PHP_EOL;
-            die();
-        }
-    }
+	public function __construct()
+	{
+		try {
+			$_config = new config('database');
+			$_db_config=array(
+				\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+				\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES '.$_config->get('charcode','utf8').' '
+			);
+			parent::__construct("mysql:host=" . $_config->hostname . ";dbname=" . $_config->databasename, $_config->username, $_config->password,$_db_config);
+		} catch (\Exception $e) {
+			echo 'Database error:' . PHP_EOL;
+			echo 'error code:' . $e->getCode() . PHP_EOL;
+			echo 'error message:' . $e->getMessage() . PHP_EOL;
+			die();
+		}
+	}
 
     /**
      * Create table MYSQL syntax
