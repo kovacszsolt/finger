@@ -1,6 +1,8 @@
 <?php
 namespace finger;
 
+use finger\server;
+use finger\log;
 /**
  * main configuration
  * Class config
@@ -9,85 +11,83 @@ namespace finger;
 class config
 {
 
-    /**
-     * config file type
-     * @var string
-     */
-    private $type;
+	/**
+	 * config file type
+	 * @var string
+	 */
+	private $type;
 
-    /**
-     * config file variables
-     * @var array
-     */
-    private $data;
+	/**
+	 * config file variables
+	 * @var array
+	 */
+	private $data;
 
-    /**
-     * config file path
-     * @var string
-     */
-    private $fileName;
+	/**
+	 * config file path
+	 * @var string
+	 */
+	private $fileName;
 
-    /**
-     * Check config file name
-     * @return string
-     */
-    private function getFileName()
-    {
-        $_HTTP_HOST = '';
-        if (isset($_SERVER['HTTP_HOST'])) {
-            $_HTTP_HOST = $_SERVER['HTTP_HOST'];
-        } elseif ((defined('HTTP_HOST'))) {
-            $_HTTP_HOST = HTTP_HOST;
-        }
-        if ($_HTTP_HOST == '') {
-            echo 'Server error!' . PHP_EOL;
-            echo 'HTTP_HOST not found!' . PHP_EOL;
-            die();
-        }
-        $_configFileName = MAINPATH . DIRECTORY_SEPARATOR. '..'.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'config.' . $_HTTP_HOST . '.' . $this->type . '.ini';
-        if (!is_file($_configFileName)) {
-            echo 'no config file:' . $_configFileName;
-            exit;
-        }
-        return $_configFileName;
-    }
+	/**
+	 * Check config file name
+	 * @return string
+	 */
+	private function getFileName()
+	{
+		$_host = server::host();
+		$_configFileName = MAINPATH . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . $_host . DIRECTORY_SEPARATOR . $this->type . '.ini';
+		if (!is_file($_configFileName)) {
+			log::save('no config file:' . $_configFileName);
+			die();
+		}
+		return $_configFileName;
+	}
 
-    /**
-     * Read ini file to array
-     */
-    private function getData()
-    {
-        $this->data = parse_ini_file($this->fileName,true);
-    }
+	/**
+	 * Read ini file to array
+	 */
+	private function getData()
+	{
+		$this->data = parse_ini_file($this->fileName, true);
+	}
 
-    /**
-     * config constructor.
-     * @param $iniType
-     */
-    public function __construct($iniType)
-    {
-        $this->type = $iniType;
-        $this->fileName = $this->getFileName();
-        $this->getData();
-    }
+	/**
+	 * config constructor.
+	 * @param $iniType
+	 */
+	public function __construct($iniType)
+	{
+		$this->type = $iniType;
+		$this->fileName = $this->getFileName();
+		$this->getData();
+	}
 
-    /**
-     * Get value from INI
-     * @param $name
-     * @param $default
-     * @return mixed
-     */
-    public function get($name, $default = '')
-    {
-        $_return = $default;
-        if (isset($this->data[$name])) {
-            $_return = $this->data[$name];
-        }
-        return $_return;
-    }
+	/**
+	 * Get value from INI
+	 * @param $name
+	 * @param $default
+	 * @return mixed
+	 */
+	public function get($name, $default = '')
+	{
+		$_return = $default;
+		if (isset($this->data[$name])) {
+			$_return = $this->data[$name];
+		} else {
+			if (strpos($name,'.')>0) {
+				$_arrayName=substr($name,0,strpos($name,'.'));
+				if (isset($this->data[$_arrayName][substr($name,strpos($name,'.')+1)])) {
+					$_return = $this->data[$_arrayName][substr($name,strpos($name,'.')+1)];
+				}
+			}
+		}
+		return $_return;
+	}
 
-    public function getAll() {
-        return $this->data;
-    }
+	public function getAll()
+	{
+		return $this->data;
+	}
 
 }

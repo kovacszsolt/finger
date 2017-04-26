@@ -11,80 +11,86 @@ use \finger\storage as storage;
 class imagerecord extends \finger\model\record
 {
 
-    /**
-     * Main ID join to the root table
-     * @var
-     */
-    protected $a_rootid;
+	/**
+	 * Main ID join to the root table
+	 * @var
+	 */
+	protected $a_rootid;
 
-    /**
-     * image name
-     * @var
-     */
-    protected $a_name;
+	/**
+	 * image name
+	 * @var
+	 */
+	protected $a_name;
 
-    /**
-     * image alt text
-     * @var
-     */
-    protected $a_alt;
+	/**
+	 * image alt text
+	 * @var
+	 */
+	protected $a_alt;
 
-    /**
-     * image extension
-     * @var
-     */
-    protected $a_extension;
+	/**
+	 * image extension
+	 * @var
+	 */
+	protected $a_extension;
 
-    /**
-     * image tmp path
-     * @var
-     */
-    protected $tmpFileName;
+	/**
+	 * image size
+	 * @var
+	 */
+	protected $a_size;
 
-    /**
-     * Set root ID
-     * @param $value
-     */
-    public function setRootId($value)
-    {
-        $this->a_rootid = $value;
-    }
+	/**
+	 * image tmp path
+	 * @var
+	 */
+	protected $tmpFileName;
 
-    /**
-     * get Root id
-     * @return mixed
-     */
-    public function getRootId()
-    {
-        return $this->a_rootid;
-    }
+	/**
+	 * Set root ID
+	 * @param $value
+	 */
+	public function setRootId($value)
+	{
+		$this->a_rootid = $value;
+	}
+
+	/**
+	 * get Root id
+	 * @return mixed
+	 */
+	public function getRootId()
+	{
+		return $this->a_rootid;
+	}
 
 
 
-    /**
-     * set image temporary path
-     * @param $value
-     */
-    public function setTmpFileName($value)
-    {
-        $this->tmpFileName = $value;
-    }
+	/**
+	 * set image temporary path
+	 * @param $value
+	 */
+	public function setTmpFileName($value)
+	{
+		$this->tmpFileName = $value;
+	}
 
-    /**
-     * Get image temporary path
-     * @return mixed
-     */
-    public function getTmpFileName()
-    {
-        return $this->tmpFileName;
-    }
+	/**
+	 * Get image temporary path
+	 * @return mixed
+	 */
+	public function getTmpFileName()
+	{
+		return $this->tmpFileName;
+	}
 
-    /**
-     * Get image full storage path
-     */
-    public function getPath()
-    {
-        storage::getFile($this->path . DIRECTORY_SEPARATOR . $this->getID() . '.' . $this->getExtension());
-    }
+	/**
+	 * Get image full storage path
+	 */
+	public function getPath()
+	{
+		storage::getFile($this->path . DIRECTORY_SEPARATOR . $this->getID() . '.' . $this->getExtension());
+	}
 
 }
