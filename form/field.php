@@ -89,6 +89,7 @@ class field
                 break;
             case 'csrf':
                 $_return = $this->checkCSRF();
+                break;
             default:
                 echo 'no: ' . $this->type;
                 exit;
@@ -127,7 +128,7 @@ class field
         if (sizeof($_valueArray) == 2) {
             $_keyPre = $this->_session->getValue($_valueArray[0], '');
             if ($_keyPre != '') {
-                $this->_session->remove($_valueArray[0]);
+                //$this->_session->remove($_valueArray[0]);
                 if ($_keyPre == $_valueArray[1]) {
                     $_return = true;
                 }

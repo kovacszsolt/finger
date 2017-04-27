@@ -10,6 +10,12 @@ use \finger\form\field as formfield;
 class check
 {
     private $fields;
+    private $errorFields = array();
+
+    public function getError()
+    {
+        return $this->errorFields;
+    }
 
     public function addField($name, $required, $type, $length = '')
     {
@@ -46,11 +52,14 @@ class check
         $_return = false;
         foreach ($this->fields as $field_name => $field) {
             if ($field->checkRequired()) {
-                $field->check();
+                $_return = $field->check();
+            } else {
+                $this->errorFields[] = array(
+                    'field' => $field,
+                    'type' => 'required'
+                );
             }
         }
-        echo 'q';
-        exit;
         return $_return;
     }
 
@@ -63,19 +72,8 @@ class check
             foreach ($this->fields as $field_name => $field) {
                 $field->setValue($_request[$field_name]);
             }
-            $this->checkFields();
-
-
-            print_r($this->fields);
-            exit;
-            $_timestampkey = request::get('timestampkey', '');
-            if (sizeof(explode('.', $_timestampkey)) == 2) {
-                echo 'timestamp';
-                exit;
-            }
-            print_r($_SESSION);
-            exit;
+            $_return = $this->checkFields();
         }
-
+        return $_return;
     }
 }
