@@ -6,6 +6,7 @@
     "homepage": "https://github.com/kovacszsolt/finger",
     "license": "MIT",
     "require": {
+        "swiftmailer/swiftmailer": "^5.4"
     },
     "authors": [
         {
