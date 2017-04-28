@@ -61,11 +61,10 @@ class mail
     /**
      * Add mail address
      * @param string $email
-     * @param string $name
      */
-    public function addTo($email, $name = '')
+    public function addTo($email)
     {
-        $this->to[] = array($email, ($name == '') ? $email : $name);
+        $this->to[] = $email;
     }
 
     /**
@@ -77,6 +76,7 @@ class mail
         $_message->setSubject($this->subject);
         $_message->setFrom($this->from);
         $_message->setTo($this->to);
+        $_message->setContentType('text/html');
         $_message->setBody($this->body);
         $_mailer = \Swift_Mailer::newInstance($this->_transport);
         $result = $_mailer->send($_message);
