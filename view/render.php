@@ -14,171 +14,194 @@ use \finger\config as config;
 class render
 {
 
-    /**
-     * Controller name
-     * @var
-     */
-    public $controller;
+	/**
+	 * Controller name
+	 * @var
+	 */
+	public $controller;
 
-    /**
-     * Values
-     * @var
-     */
-    private $values;
+	/**
+	 * Values
+	 * @var
+	 */
+	private $values;
 
-    /**
-     * Session
-     * @var session
-     */
-    protected $session;
+	/**
+	 * Session
+	 * @var session
+	 */
+	protected $session;
 
-    /**
-     * Template file
-     * @var null
-     */
-    private $file;
+	/**
+	 * Template file
+	 * @var null
+	 */
+	private $file;
 
-    protected $settings;
+	protected $settings;
 
-    /**
-     * render constructor.
-     */
-    public function __construct()
-    {
-        $_configClass = new config('settings');
-        $this->settings = $_configClass;
-        $this->session = new session();
-        $this->file = NULL;
-    }
+	/**
+	 * current path variables
+	 * @var array
+	 */
+	protected $path;
 
-    /**
-     * Form URL
-     * @return string
-     */
-    public function formURL()
-    {
-        $_return = '/' . request::get('_module') . '/' . request::get('_controller') . '/' . request::get('_action') . '/form/';
-        return $_return;
-    }
+	/**
+	 * Special JS file
+	 * /site/[module]/js.controller/[controller]/[action]/[method]/
+	 * @var string
+	 */
+	protected $_jsPath = '';
 
-    /**
-     * Set template file
-     * @param $filename
-     */
-    public function setFile($filename)
-    {
-        $this->file = $filename;
-    }
+	/**
+	 * render constructor.
+	 */
+	public function __construct()
+	{
+		$_configClass = new config('settings');
+		$this->settings = $_configClass;
+		$this->session = new session();
+		$this->file = NULL;
+		$this->path = array(
+			'module' => request::get('_module'),
+			'controller' => request::get('_controller'),
+			'action' => request::get('_action'),
+			'method' => request::get('_method')
+		);
+		$_tmp = 'site' . DIRECTORY_SEPARATOR . $this->path['module'] . DIRECTORY_SEPARATOR . 'js.controller' . DIRECTORY_SEPARATOR . $this->path['controller'] . '.' . $this->path['action'] . '.' . $this->path['method'] . '.js';
+		if (is_file(server::documentRoot() . $_tmp)) {
+			$this->_jsPath = $_tmp;
+		}
+	}
 
-    /**
-     * Add value to Template
-     * @param $name
-     * @param $value
-     */
-    public function addValue($name, $value)
-    {
-        $this->values[$name] = $value;
-    }
+	/**
+	 * Form URL
+	 * @return string
+	 */
+	public function formURL()
+	{
+		$_return = '/' . request::get('_module') . '/' . request::get('_controller') . '/' . request::get('_action') . '/form/';
+		return $_return;
+	}
 
-    /**
-     * Get Template stored value
-     * @param $name
-     * @param null $default
-     * @return null
-     */
-    public function getValue($name, $default = NULL)
-    {
-        $return = $default;
-        if (isset($this->values[$name])) {
-            $return = $this->values[$name];
-        }
-        return $return;
-    }
+	/**
+	 * Set template file
+	 * @param $filename
+	 */
+	public function setFile($filename)
+	{
+		$this->file = $filename;
+	}
 
-    /**
-     * Render Template
-     * @param bool $print
-     * @return string
-     */
-    public function render($print = true)
-    {
-        $_return = '';
-        $_file = server::documentRoot() . '../' . $this->file;
-        if (!$print) {
-            ob_start();
-        }
-        if (is_file($_file)) {
-            include_once $_file;
-        } else {
-            echo 'template not found = ' . $_file;
-        }
-        if (!$print) {
-            $_return = ob_get_contents();
-            ob_clean();
+	/**
+	 * Add value to Template
+	 * @param $name
+	 * @param $value
+	 */
+	public function addValue($name, $value)
+	{
+		$this->values[$name] = $value;
+	}
 
-        }
-        return $_return;
-    }
+	/**
+	 * Get Template stored value
+	 * @param $name
+	 * @param null $default
+	 * @return null
+	 */
+	public function getValue($name, $default = NULL)
+	{
+		$return = $default;
+		if (isset($this->values[$name])) {
+			$return = $this->values[$name];
+		}
+		return $return;
+	}
 
-    /**
-     * Stored value to JSON
-     * @param $value
-     */
-    public function renderJSON($value)
-    {
-        echo json_encode($value);
-    }
+	/**
+	 * Render Template
+	 * @param bool $print
+	 * @return string
+	 */
+	public function render($print = true)
+	{
+		$_return = '';
+		$_file = server::documentRoot() . '../' . $this->file;
+		if (!$print) {
+			ob_start();
+		}
+		if (is_file($_file)) {
+			include_once $_file;
+		} else {
+			echo 'template not found = ' . $_file;
+		}
+		if (!$print) {
+			$_return = ob_get_contents();
+			ob_clean();
 
-    /**
-     * Check admin Javascript
-     */
-    public function adminJavascript()
-    {
-        $file = '/site/' . request::get('_module') . '/_method/js/' . request::get('_method') . '.js';
-        $this->elementJavascript($file);
-        $file = '/site/' . request::get('_module') . '/' . request::get('_controller') . '/' . request::get('_action') . '.' . request::get('_method') . '.js';
-        $this->elementJavascript($file);
-    }
+		}
+		return $_return;
+	}
 
-    /**
-     * Show Javascript
-     * @param $file
-     */
-    public function elementJavascript($file)
-    {
-        $echo = '';
-        if (is_file(server::documentRoot() . '/' . $file)) {
-            $echo = '<script src="' . $file . '"></script>' . PHP_EOL;
-        }
-        echo $echo;
-    }
+	/**
+	 * Stored value to JSON
+	 * @param $value
+	 */
+	public function renderJSON($value)
+	{
+		echo json_encode($value);
+	}
 
-    /**
-     * Include file to Template
-     * @param $file
-     * @param null $var local variable
-     */
-    public function includeFile($file, $var = NULL)
-    {
-        $_file = MAINPATH . '/../site/' . request::get('_module') . '/' . $file;
-        include $_file;
-    }
+	/**
+	 * Check admin Javascript
+	 */
+	public function adminJavascript()
+	{
+		$file = '/site/' . request::get('_module') . '/_method/js/' . request::get('_method') . '.js';
+		$this->elementJavascript($file);
+		$file = '/site/' . request::get('_module') . '/' . request::get('_controller') . '/' . request::get('_action') . '.' . request::get('_method') . '.js';
+		$this->elementJavascript($file);
+	}
 
-    /**
-     * Facebook Share button
-     * @param $url
-     */
-    public function _facebookShare($url)
-    {
-        echo '
+	/**
+	 * Show Javascript
+	 * @param $file
+	 */
+	public function elementJavascript($file)
+	{
+		$echo = '';
+		if (is_file(server::documentRoot() . '/' . $file)) {
+			$echo = '<script src="' . $file . '"></script>' . PHP_EOL;
+		}
+		echo $echo;
+	}
+
+	/**
+	 * Include file to Template
+	 * @param $file
+	 * @param null $var local variable
+	 */
+	public function includeFile($file, $var = NULL)
+	{
+		$_file = MAINPATH . '/../site/' . request::get('_module') . '/' . $file;
+		include $_file;
+	}
+
+	/**
+	 * Facebook Share button
+	 * @param $url
+	 */
+	public function _facebookShare($url)
+	{
+		echo '
     <div class="fb-share-button" data-href="' . request::getProtocol() . '://' . request::getServerName() . $url . '" 
         data-layout="button_count" 
         data-size="small" 
         data-mobile-iframe="true">
         <a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u='
-            . urlencode(request::getProtocol() . '://' . request::getServerName() . $url) . '">Megosztás</a></div>
+			. urlencode(request::getProtocol() . '://' . request::getServerName() . $url) . '">Megosztás</a></div>
     ';
-    }
+	}
 
 
 }
