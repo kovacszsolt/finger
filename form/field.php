@@ -5,6 +5,7 @@ namespace finger\form;
 use \finger\session as session;
 use \finger\request as request;
 use \finger\random as random;
+use \finger\config as config;
 
 class field
 {
@@ -14,6 +15,7 @@ class field
     private $length;
     private $value;
     private $_session;
+    private $_config;
 
     /**
      * field constructor.
@@ -29,6 +31,8 @@ class field
         $this->setRequired($required);
         $this->setType($type);
         $this->setLength($length);
+        $this->_config = new config('settings');
+        $this->_config = $this->_config->get('secure');
     }
 
     /**
@@ -107,8 +111,9 @@ class field
     private function checkGCaptcha()
     {
         $_return = false;
-        $_config_secure = $this->settings['secure']['googlecaptcaptchasecret'];
-        $secret = $this->settings['secure']['googlecaptcaptchasecret'];
+
+        $_config_secure = $this->_config['googlecaptcaptchasecret'];
+        $secret = $this->_config['googlecaptcaptchasecret'];
         $verifyResponse = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret=' . $secret . '&response=' . $_POST['g-recaptcha-response']);
         $responseData = json_decode($verifyResponse);
         if ($responseData->success) {
