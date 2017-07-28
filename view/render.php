@@ -152,16 +152,7 @@ class render
 		echo json_encode($value);
 	}
 
-	/**
-	 * Check admin Javascript
-	 */
-	public function adminJavascript()
-	{
-		$file = '/site/' . request::get('_module') . '/_method/js/' . request::get('_method') . '.js';
-		$this->elementJavascript($file);
-		$file = '/site/' . request::get('_module') . '/' . request::get('_controller') . '/' . request::get('_action') . '.' . request::get('_method') . '.js';
-		$this->elementJavascript($file);
-	}
+
 
 	/**
 	 * Show Javascript
@@ -199,7 +190,7 @@ class render
         data-size="small" 
         data-mobile-iframe="true">
         <a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u='
-			. urlencode(request::getProtocol() . '://' . request::getServerName() . $url) . '">Megosztás</a></div>
+		     . urlencode(request::getProtocol() . '://' . request::getServerName() . $url) . '">Megosztás</a></div>
     ';
 	}
 

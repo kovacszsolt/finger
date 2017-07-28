@@ -85,6 +85,10 @@ class config
 		return $_return;
 	}
 
+	/**
+	 * All variables
+	 * @return array
+	 */
 	public function getAll()
 	{
 		return $this->data;

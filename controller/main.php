@@ -2,6 +2,7 @@
 
 namespace finger\controller;
 
+use finger\request;
 use \finger\session as session;
 use \finger\config as config;
 
@@ -10,96 +11,100 @@ use \finger\config as config;
  */
 abstract class main {
 
-    /**
-     * Current Session
-     * @var session
-     */
-    protected $session;
+	/**
+	 * Current Session
+	 * @var session
+	 */
+	protected $session;
 
-    /**
-     * Current module name
-     * @var
-     */
-    public $_module;
+	/**
+	 * Current module name
+	 * @var
+	 */
+	public $_module;
 
-    /**
-     * Current controller name
-     * @var
-     */
-    public $_controller;
+	/**
+	 * Current controller name
+	 * @var
+	 */
+	public $_controller;
 
-    /**
-     * Current action name
-     * @var
-     */
-    public $_action;
+	/**
+	 * Current action name
+	 * @var
+	 */
+	public $_action;
 
-    /**
-     * Current method
-     * @var
-     */
-    public $_method;
+	/**
+	 * Current method
+	 * @var
+	 */
+	public $_method;
 
-    /**
-     * Extra parameters
-     * @var
-     */
-    public $_params;
-    
-    protected $settings;
+	/**
+	 * Extra parameters
+	 * @var
+	 */
+	public $_params;
 
-    /**
-     * Table JSON for ....
-     * @var array
-     */
-    protected $tableJSON = array();
+	protected $settings;
 
-    /**
-     * Current controller table
-     * @var
-     */
-    protected $table;
+	/**
+	 * Table JSON for ....
+	 * @var array
+	 */
+	protected $tableJSON = array();
 
-    /**
-     * Current view
-     * @var \finger\view
-     */
-    protected $view;
-    protected $languages;
+	/**
+	 * Current controller table
+	 * @var
+	 */
+	protected $table;
 
-    /**
-     * main constructor.
-     */
-    public function __construct() {
-        $tmp = new config('settings');
-        $this->settings=$tmp->getAll();
-        $this->languages = $tmp->get('languages');
-        $this->session = new session();
-        $this->view = new \finger\view\render();
-        $this->view->addValue('languages', $this->languages);
-    }
+	/**
+	 * Current view
+	 * @var \finger\view
+	 */
+	protected $view;
+	protected $languages;
 
-    /**
-     * Render the view from class controller class name
-     */
-    protected function render() {
-        $this->view->setFile('site/' . $this->_module . '/' . $this->_controller . '/view/' . $this->_action . '.' . $this->_method . '.php');
-        $this->view->render();
-    }
+	/**
+	 * main constructor.
+	 */
+	public function __construct() {
+		$tmp             = new config( 'settings' );
+		$this->settings  = $tmp->getAll();
+		$this->languages = $tmp->get( 'languages' );
+		$this->session   = new session();
+		$this->view      = new \finger\view\render();
+		$this->view->addValue( 'languages', $this->languages );
+		$this->_module     = request::get( '_module' );
+		$this->_controller = request::get( '_controller' );
+		$this->_action     = request::get( '_action' );
+		$this->_method     = request::get( '_method' );
+	}
 
-    /**
-     * Get Flash message
-     */
-    public function messageGet() {
-        $_message = $this->session->flash('message');
-        $this->view->renderJSON(array('message' => $_message));
-    }
 
-    /**
-     * Main root
-     */
-    public function indexGet() {
-        $this->render();
-    }
+	/**
+	 * Render the view from class controller class name
+	 */
+	protected function render() {
+		$this->view->setFile( 'site/' . $this->_module . '/' . $this->_controller . '/view/' . $this->_action . '.' . $this->_method . '.php' );
+		$this->view->render();
+	}
 
+	/**
+	 * Get Flash message
+	 */
+	public function messageGet() {
+		$_message = $this->session->flash( 'message' );
+		$this->view->renderJSON( array( 'message' => $_message ) );
+	}
+
+	/**
+	 * Main root
+	 */
+	public function indexGet() {
+		$this->render();
+	}
 }

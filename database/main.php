@@ -9,8 +9,10 @@ use \finger\storage as Storage;
  * Main Database Class main
  * @package finger\database
  */
-class main extends \finger\database\mysql
-{
+class main extends \finger\database\mysql {
+
+	// Last Insert ID
+	public $_lastInsertID = 0;
 
 	/**
 	 * inorder table field exists
@@ -90,47 +92,45 @@ class main extends \finger\database\mysql
 	/**
 	 * main constructor.
 	 */
-	public function __construct()
-	{
+	public function __construct() {
 		$this->_exportPath = Storage::getStoragePath() . '/_export/';
 		parent::__construct();
 	}
 
 	/**
 	 * Set Inorder fields exits
+	 *
 	 * @param bool $value
 	 */
-	protected function setInorderField($value)
-	{
+	protected function setInorderField( $value ) {
 		$this->_inorderField = $value;
 	}
 
 	/**
 	 * Set Createdata fields exits
+	 *
 	 * @param bool $value
 	 */
-	protected function setCreatedateField($value)
-	{
+	protected function setCreatedateField( $value ) {
 		$this->_createdateField = $value;
 	}
 
 
 	/**
 	 * Add Join to model
+	 *
 	 * @param $table
 	 * @param $table_id
 	 * @param $join_id
 	 */
-	protected function addJoin($table, $table_id, $join_id)
-	{
-		$this->_join[] = array('table' => $table, 'table_id' => $table_id, 'join_id' => $join_id);
+	protected function addJoin( $table, $table_id, $join_id ) {
+		$this->_join[] = array( 'table' => $table, 'table_id' => $table_id, 'join_id' => $join_id );
 	}
 
 	/**
 	 * Skeleton join
 	 */
-	protected function joins()
-	{
+	protected function joins() {
 
 	}
 
@@ -138,9 +138,9 @@ class main extends \finger\database\mysql
 	 * Get Record Class name
 	 * @return string
 	 */
-	private function _getClassName()
-	{
-		$_return = substr($this->className, 0, strrpos($this->className, '\\')) . '\record';
+	private function _getClassName() {
+		$_return = substr( $this->className, 0, strrpos( $this->className, '\\' ) ) . '\record';
+
 		return $_return;
 	}
 
@@ -148,8 +148,7 @@ class main extends \finger\database\mysql
 	 * Values for debug
 	 * @return array
 	 */
-	public function debugValues()
-	{
+	public function debugValues() {
 		return $this->_values;
 	}
 
@@ -157,100 +156,105 @@ class main extends \finger\database\mysql
 	 * SQL command for debug
 	 * @return mixed
 	 */
-	public function debugSQL()
-	{
+	public function debugSQL() {
 		return $this->_sql;
 	}
 
 	/**
 	 * Model SQL create
+	 *
 	 * @param bool $createTable true=create SQL table
 	 */
-	public function install()
-	{
+	public function install() {
 
-		parent::createtable($this->fields);
+		parent::createtable( $this->fields );
 
 	}
 
 	/**
 	 * Find record where primary key
+	 *
 	 * @param $id
+	 *
 	 * @return mixed
 	 */
-	public function find($id)
-	{
+	public function find( $id ) {
 
 		$_getClassName = $this->_getClassName();
-		$_return = new $_getClassName();
-		$this->addWhere('id', $id);
+		$_return       = new $_getClassName();
+		$this->addWhere( 'id', $id );
 		$_record = $this->query();
-		if (!is_null($_record)) {
+		if ( ! is_null( $_record ) ) {
 			$_return = $_record[0];
 		}
+
 		return $_return;
 	}
 
 	/**
 	 * Find record where Keyname field
+	 *
 	 * @param $keyname
+	 *
 	 * @return mixed
 	 */
-	public function findKey($keyname)
-	{
+	public function findKey( $keyname ) {
 		$_getClassName = $this->_getClassName();
-		$_return = new $_getClassName();
-		$this->addWhere('keyname', $keyname);
+		$_return       = new $_getClassName();
+		$this->addWhere( 'keyname', $keyname );
 		$_record = $this->query();
-		if (!is_null($_record)) {
+		if ( ! is_null( $_record ) ) {
 			$_return = $_record[0];
 		}
+
 		return $_return;
 	}
 
 	/**
 	 * Create update SQL
+	 *
 	 * @param $record
+	 *
 	 * @return bool
 	 */
-	public function update($record)
-	{
+	public function update( $record ) {
 		try {
-			$_sql = 'UPDATE ' . $this->tableName . ' ';
+			$_sql      = 'UPDATE ' . $this->tableName . ' ';
 			$_fieldPos = 0;
-			foreach ($this->fields as $_fieldName => $_fieldAttribs) {
-				$_fieldPos++;
-				if ($_fieldPos == 1) {
+			foreach ( $this->fields as $_fieldName => $_fieldAttribs ) {
+				$_fieldPos ++;
+				if ( $_fieldPos == 1 ) {
 					$_sql .= ' SET ' . $_fieldName . '=:' . $_fieldName . ' ';
 				} else {
 					$_sql .= ' ,' . $_fieldName . '=:' . $_fieldName . ' ';
 				}
 			}
-			$_sql .= ' WHERE id=:id ';
+			$_sql       .= ' WHERE id=:id ';
 			$this->_sql = $_sql;
-			$_prepare = $this->prepare($_sql);
+			$_prepare   = $this->prepare( $_sql );
 
-			foreach ($this->fields as $_fieldName => $_fieldAttribs) {
-				$_functionName = 'get' . ucfirst($_fieldName);
-				$this->_values[$_fieldName] = $record->$_functionName();
-				$_prepare->bindValue(':' . $_fieldName, $record->$_functionName());
+			foreach ( $this->fields as $_fieldName => $_fieldAttribs ) {
+				$_functionName                = 'get' . ucfirst( $_fieldName );
+				$this->_values[ $_fieldName ] = $record->$_functionName();
+				$_prepare->bindValue( ':' . $_fieldName, $record->$_functionName() );
 			}
 			$this->_values['id'] = $record->getID();
-			$_prepare->bindValue(':id', $record->getID());
+			$_prepare->bindValue( ':id', $record->getID() );
 			$this->beginTransaction();
 			$_prepare->execute();
-			if ($_prepare->errorCode() != '00000') {
+			if ( $_prepare->errorCode() != '00000' ) {
 				echo $_sql;
-				print_r($this->fields);
-				print_r($_prepare->errorInfo());
+				print_r( $this->fields );
+				print_r( $_prepare->errorInfo() );
 				exit;
 			}
 			$_return = true;
 			$this->commit();
+
 			return $_return;
-		} catch (PDOExecption $e) {
+		} catch ( PDOExecption $e ) {
 			$this->rollback();
-			print_r($e);
+			print_r( $e );
 			exit;
 
 			return false;
@@ -259,73 +263,72 @@ class main extends \finger\database\mysql
 
 	/**
 	 * Create new record
+	 *
 	 * @param $record
+	 *
 	 * @return int|string
 	 */
-	public function add($record)
-	{
+	public function add( $record ) {
 		try {
 			$_recordCount = $this->count();
-			if ($this->_inorderField) {
-				if ($_recordCount != 0) {
+			if ( $this->_inorderField ) {
+				if ( $_recordCount != 0 ) {
 					$newOrder = 0;
-					$_sql = 'UPDATE ' . $this->tableName . ' ';
-					$_sql .= 'SET inorder=inorder+1 ';
-					$_sql .= 'WHERE inorder>=' . $record->getInorder() . ' ';
-					$this->runSQL($_sql);
+					$_sql     = 'UPDATE ' . $this->tableName . ' ';
+					$_sql     .= 'SET inorder=inorder+1 ';
+					$_sql     .= 'WHERE inorder>=' . $record->getInorder() . ' ';
+					$this->runSQL( $_sql );
 				}
 			}
 			$_fieldValues = array();
-			$_sql = 'INSERT INTO ' . $this->tableName . '(';
-			$_fieldPos = 0;
-			foreach ($this->fields as $_fieldName => $_fieldAttribs) {
-				$_fieldPos++;
-				if ($_fieldPos == 1) {
+			$_sql         = 'INSERT INTO ' . $this->tableName . '(';
+			$_fieldPos    = 0;
+			foreach ( $this->fields as $_fieldName => $_fieldAttribs ) {
+				$_fieldPos ++;
+				if ( $_fieldPos == 1 ) {
 					$_sql .= ' ' . $_fieldName . ' ';
 				} else {
 					$_sql .= ' ,' . $_fieldName . ' ';
 				}
 			}
-			if ($this->_inorderField) {
+			if ( $this->_inorderField ) {
 				$_sql .= ' ,inorder ';
 			}
-			$_sql .= ' ,createhost ';
-			$_sql .= ') VALUES(';
+			$_sql      .= ' ,createhost ';
+			$_sql      .= ') VALUES(';
 			$_fieldPos = 0;
-			foreach ($this->fields as $_fieldName => $_fieldAttribs) {
-				$_fieldPos++;
-				if ($_fieldPos == 1) {
+			foreach ( $this->fields as $_fieldName => $_fieldAttribs ) {
+				$_fieldPos ++;
+				if ( $_fieldPos == 1 ) {
 					$_sql .= ' :' . $_fieldName . ' ';
 				} else {
 					$_sql .= ' ,:' . $_fieldName . ' ';
 				}
 			}
-			if ($this->_inorderField) {
+			if ( $this->_inorderField ) {
 				$_sql .= ' ,:inorder ';
 			}
-			$_sql .= ' ,\'' . $_SERVER['REMOTE_ADDR'] . '\' ';
-			$_sql .= ') ';
-			$_prepare = $this->prepare($_sql);
-			foreach ($this->fields as $_fieldName => $_fieldAttribs) {
-				$_functionName = 'get' . ucfirst($_fieldName);
-				$_fieldValues[':' . $_fieldName] = $record->$_functionName();
-				$_prepare->bindValue(':' . $_fieldName, $record->$_functionName());
+			$_sql     .= ' ,\'' . $_SERVER['REMOTE_ADDR'] . '\' ';
+			$_sql     .= ') ';
+			$_prepare = $this->prepare( $_sql );
+			foreach ( $this->fields as $_fieldName => $_fieldAttribs ) {
+				$_functionName                     = 'get' . ucfirst( $_fieldName );
+				$_fieldValues[ ':' . $_fieldName ] = $record->$_functionName();
+				$_prepare->bindValue( ':' . $_fieldName, $record->$_functionName() );
 			}
-			if ($this->_inorderField) {
-				if ($_recordCount == 0) {
-					$_prepare->bindValue(':inorder', 1);
+			if ( $this->_inorderField ) {
+				if ( $_recordCount == 0 ) {
+					$_prepare->bindValue( ':inorder', 1 );
 				} else {
-					$_prepare->bindValue(':inorder', $record->getInorder());
+					$_prepare->bindValue( ':inorder', $record->getInorder() );
 				}
 			}
-
-
 			$this->beginTransaction();
 			$_prepare->execute();
-			if ($_prepare->errorCode() != '00000') {
+			if ( $_prepare->errorCode() != '00000' ) {
 				echo $_sql;
-				print_r($_fieldValues);
-				print_r($_prepare->errorInfo());
+				print_r( $_fieldValues );
+				print_r( $_prepare->errorInfo() );
 				exit;
 			}
 			$_return = $this->lastInsertId();
@@ -333,192 +336,199 @@ class main extends \finger\database\mysql
 
 
 			return $_return;
-		} catch (PDOExecption $e) {
+		} catch ( PDOExecption $e ) {
 			$this->rollback();
-			print_r($e);
+			print_r( $e );
 			exit;
-			return -1;
+
+			return - 1;
 		}
 	}
 
 	/**
 	 * Run full SQL command
+	 *
 	 * @param $sql
+	 *
 	 * @return array
 	 */
-	public function runSQL($sql)
-	{
-		$_prepare = $this->prepare($sql);
-		$_records = $_prepare->fetchAll(\PDO::FETCH_ASSOC);
+	public function runSQL( $sql ) {
+		$_prepare = $this->prepare( $sql );
+		$_records = $_prepare->fetchAll( \PDO::FETCH_ASSOC );
 		$_prepare->execute();
+
 		return $_records;
 	}
 
 	/**
 	 * Reorder the records
+	 *
 	 * @param $id
 	 * @param $newOrder
 	 */
-	public function reOrder($id, $newOrder)
-	{
-		if ($this->_inorderField) {
-			$_record = $this->find($id);
+	public function reOrder( $id, $newOrder ) {
+		if ( $this->_inorderField ) {
+			$_record  = $this->find( $id );
 			$oldOrder = $_record->getInorder();
-			if ($newOrder > $oldOrder) {
+			if ( $newOrder > $oldOrder ) {
 				$_sql = 'UPDATE ' . $this->tableName . ' ';
 				$_sql .= 'SET inorder=inorder-1 ';
 				$_sql .= 'WHERE inorder<=' . $newOrder . ' ';
 				$_sql .= 'AND inorder>=' . $oldOrder . ' ';
-				$this->runSQL($_sql);
+				$this->runSQL( $_sql );
 				$_sql = 'UPDATE ' . $this->tableName . ' ';
 				$_sql .= 'SET inorder=' . $newOrder . ' ';
 				$_sql .= 'WHERE id=' . $id . ' ';
-				$this->runSQL($_sql);
+				$this->runSQL( $_sql );
 			} else {
 				$_sql = 'UPDATE ' . $this->tableName . ' ';
 				$_sql .= 'SET inorder=inorder+1 ';
 				$_sql .= 'WHERE inorder>=' . $newOrder . ' ';
 				$_sql .= 'AND inorder<=' . $oldOrder . ' ';
 
-				$this->runSQL($_sql);
+				$this->runSQL( $_sql );
 				$_sql = 'UPDATE ' . $this->tableName . ' ';
 				$_sql .= 'SET inorder=' . $newOrder . ' ';
 				$_sql .= 'WHERE id=' . $id . ' ';
-				$this->runSQL($_sql);
+				$this->runSQL( $_sql );
 			}
 		}
 	}
 
 	/**
 	 * Remove record from Database
+	 *
 	 * @param $id
+	 *
 	 * @return bool
 	 */
-	public function delete($id)
-	{
+	public function delete( $id ) {
 		try {
-			$_record = $this->find($id);
+			$_record  = $this->find( $id );
 			$oldOrder = $_record->getInorder();
 
-			$_sql = 'DELETE FROM ' . $this->tableName . ' WHERE id = :id ';
-			$_prepare = $this->prepare($_sql);
-			$_prepare->bindValue(':id', $id);
+			$_sql     = 'DELETE FROM ' . $this->tableName . ' WHERE id = :id ';
+			$_prepare = $this->prepare( $_sql );
+			$_prepare->bindValue( ':id', $id );
 			$this->beginTransaction();
 			$_prepare->execute();
 			$_return = true;
 			$this->commit();
-			if ($this->_inorderField) {
+			if ( $this->_inorderField ) {
 				$this->beginTransaction();
 				$_sql = 'UPDATE ' . $this->tableName . ' ';
 				$_sql .= 'SET inorder=inorder-1 ';
 				$_sql .= 'WHERE inorder>' . $oldOrder . ' ';
 				$this->commit();
 			}
-			$this->runSQL($_sql);
+			$this->runSQL( $_sql );
 
-		} catch (PDOExecption $e) {
+		} catch ( PDOExecption $e ) {
 			$this->rollback();
-			print_r($e);
+			print_r( $e );
 			exit;
+
 			return false;
 		}
 	}
 
 	/**
 	 * Add Where parameter
+	 *
 	 * @param $field
 	 * @param $parameter
 	 */
-	public function addWhere($field, $parameter, $method = '=')
-	{
+	public function addWhere( $field, $parameter, $method = '=' ) {
 		$_where = new \finger\database\where();
-		$_where->setName($field);
-		$_where->setParam($parameter);
-		$_where->setMethod($method);
+		$_where->setName( $field );
+		$_where->setParam( $parameter );
+		$_where->setMethod( $method );
 		$this->where[] = $_where;
 	}
 
 	/**
 	 * Query record from Database
+	 *
 	 * @param int $id_assoc
+	 *
 	 * @return array|null
 	 */
-	public function query($id_assoc = 0)
-	{
+	public function query( $id_assoc = 0 ) {
 		$_whereData = array();
 		$this->joins();
 		try {
-			$_records = NULL;
-			$_sql = 'SELECT  a.id AS a_id  ';
-			if ($this->_inorderField) {
+			$_records = null;
+			$_sql     = 'SELECT  a.id AS a_id  ';
+			if ( $this->_inorderField ) {
 				$_sql .= ' ,a.inorder AS a_inorder  ';
 			}
-			if ($this->_createdateField) {
+			if ( $this->_createdateField ) {
 				$_sql .= ' ,a.createdate AS a_createdate  ';
 			}
-			foreach ($this->fields as $_fieldName => $_fieldAttrib) {
+			foreach ( $this->fields as $_fieldName => $_fieldAttrib ) {
 				$_sql .= ' ,a.' . $_fieldName . ' AS a_' . $_fieldName . ' ';
 			}
-			foreach ($this->_join as $_join_id => $_join) {
+			foreach ( $this->_join as $_join_id => $_join ) {
 				$_joinClassName = '\model\\' . $_join['table'] . '\content\table';
-				$_joinClass = new $_joinClassName();
-				$_sql .= ' ,' . chr($_join_id + 98) . '.id AS ' . chr($_join_id + 98) . '_id ';
-				if ($this->_inorderField) {
-					$_sql .= ' ,' . chr($_join_id + 98) . '.inorder AS ' . chr($_join_id + 98) . '_inorder ';
+				$_joinClass     = new $_joinClassName();
+				$_sql           .= ' ,' . chr( $_join_id + 98 ) . '.id AS ' . chr( $_join_id + 98 ) . '_id ';
+				if ( $this->_inorderField ) {
+					$_sql .= ' ,' . chr( $_join_id + 98 ) . '.inorder AS ' . chr( $_join_id + 98 ) . '_inorder ';
 				}
-				foreach ($_joinClass->fields as $_joinFieldName => $_joinField) {
-					$_sql .= ' ,' . chr($_join_id + 98) . '.' . $_joinFieldName . ' AS ' . chr($_join_id + 98) . '_' . $_joinFieldName . ' ';
+				foreach ( $_joinClass->fields as $_joinFieldName => $_joinField ) {
+					$_sql .= ' ,' . chr( $_join_id + 98 ) . '.' . $_joinFieldName . ' AS ' . chr( $_join_id + 98 ) . '_' . $_joinFieldName . ' ';
 				}
 			}
 
 			$_sql .= 'FROM ' . $this->tableName . ' a ';
-			if (sizeof($this->_join) > 0) {
-				foreach ($this->_join as $_join_id => $_join) {
-					$_sql .= 'INNER jOIN ' . $_join['table'] . ' ' . chr($_join_id + 98) . ' ';
-					$_sql .= ' ON (a.' . $_join['join_id'] . '=' . chr($_join_id + 98) . '.' . $_join['table_id'] . ') ';
+			if ( sizeof( $this->_join ) > 0 ) {
+				foreach ( $this->_join as $_join_id => $_join ) {
+					$_sql .= 'INNER jOIN ' . $_join['table'] . ' ' . chr( $_join_id + 98 ) . ' ';
+					$_sql .= ' ON (a.' . $_join['join_id'] . '=' . chr( $_join_id + 98 ) . '.' . $_join['table_id'] . ') ';
 				}
 			}
 			$_sql .= ' WHERE 1=1 ';
-			foreach ($this->where as $_where) {
+			foreach ( $this->where as $_where ) {
 				$_sql .= ' AND a.' . $_where->getName() . $_where->getMethod() . ':' . $_where->getName() . ' ';
 			}
-			if ($this->order != '') {
-				if ($this->_inorderField) {
+			if ( $this->order != '' ) {
+				if ( $this->_inorderField ) {
 					$_sql .= ' ORDER BY ' . $this->order . ' ';
 				}
 			}
 			$this->_sql = $_sql;
-			$_prepare = $this->prepare($_sql);
-			foreach ($this->where as $_where) {
-				$this->_values[$_where->getName()] = $_where->getParam();
-				$_prepare->bindValue(':' . $_where->getName(), $_where->getParam());
+			$_prepare   = $this->prepare( $_sql );
+			foreach ( $this->where as $_where ) {
+				$this->_values[ $_where->getName() ] = $_where->getParam();
+				$_prepare->bindValue( ':' . $_where->getName(), $_where->getParam() );
 			}
 			$_prepare->execute();
-			if ($_prepare->rowCount() > 0) {
+			if ( $_prepare->rowCount() > 0 ) {
 				$_classRecord = $this->_getClassName();
-				$_records = $_prepare->fetchAll(\PDO::FETCH_CLASS, $_classRecord);
+				$_records     = $_prepare->fetchAll( \PDO::FETCH_CLASS, $_classRecord );
 			}
 			$this->records = $_records;
-			if (is_array($this->records)) {
-				switch ($id_assoc) {
+			if ( is_array( $this->records ) ) {
+				switch ( $id_assoc ) {
 					case $this::ASSOC_ID :
 						$_records = array();
-						foreach ($this->records as $_record) {
-							$_records[$_record->getId()] = $_record;
+						foreach ( $this->records as $_record ) {
+							$_records[ $_record->getId() ] = $_record;
 						}
 						break;
 					case $this::ASSOC_TITLE: {
 						$_records = array();
-						foreach ($this->records as $_record) {
-							$_records[$_record->getTitle()] = $_record;
+						foreach ( $this->records as $_record ) {
+							$_records[ $_record->getTitle() ] = $_record;
 						}
 						break;
 					}
 				}
 			}
+
 			return $_records;
-		} catch (\Exception $e) {
-			print_r($e);
+		} catch ( \Exception $e ) {
+			print_r( $e );
 			exit;
 		}
 	}
@@ -527,12 +537,12 @@ class main extends \finger\database\mysql
 	 * Get the First reocrd from query
 	 * @return mixed|null
 	 */
-	public function getFirst()
-	{
-		$_return = NULL;
-		if ((is_array($this->records)) && (sizeof($this->records) > 0)) {
+	public function getFirst() {
+		$_return = null;
+		if ( ( is_array( $this->records ) ) && ( sizeof( $this->records ) > 0 ) ) {
 			$_return = $this->records[0];
 		}
+
 		return $_return;
 	}
 
@@ -540,142 +550,148 @@ class main extends \finger\database\mysql
 	 * Get Record count
 	 * @return int
 	 */
-	public function count()
-	{
+	public function count() {
 		$_return = 0;
 		try {
-			$_records = NULL;
-			$_sql = 'SELECT  COUNT(id) AS c ';
-			$_sql .= 'FROM ' . $this->tableName . ' ';
-			$_sql .= ' WHERE 1=1 ';
-			foreach ($this->where as $_where) {
+			$_records = null;
+			$_sql     = 'SELECT  COUNT(id) AS c ';
+			$_sql     .= 'FROM ' . $this->tableName . ' ';
+			$_sql     .= ' WHERE 1=1 ';
+			foreach ( $this->where as $_where ) {
 				$_sql .= ' AND ' . $_where->getName() . '=:' . $_where->getName() . ' ';
 			}
-			$_prepare = $this->prepare($_sql);
-			foreach ($this->where as $_where) {
-				$_prepare->bindValue(':' . $_where->getName(), $_where->getParam());
+			$_prepare = $this->prepare( $_sql );
+			foreach ( $this->where as $_where ) {
+				$_prepare->bindValue( ':' . $_where->getName(), $_where->getParam() );
 			}
 			$_prepare->execute();
-			if ($_prepare->rowCount() > 0) {
-				$_records = $_prepare->fetch(\PDO::FETCH_ASSOC);
-				$_return = $_records['c'];
+			if ( $_prepare->rowCount() > 0 ) {
+				$_records = $_prepare->fetch( \PDO::FETCH_ASSOC );
+				$_return  = $_records['c'];
 			}
+
 			return $_return;
-		} catch (\Exception $e) {
-			print_r($e);
+		} catch ( \Exception $e ) {
+			print_r( $e );
 			exit;
 		}
 	}
 
 	/**
 	 * Convert Record object to Array
+	 *
 	 * @param null $records
+	 *
 	 * @return array
 	 */
-	public function RecordsToArray($records = NULL)
-	{
-		if (is_null($records)) {
+	public function RecordsToArray( $records = null ) {
+		if ( is_null( $records ) ) {
 			$records = $this->records;
 		}
 		$return = array();
-		foreach ($records as $record) {
-			$_tmp = array();
+		foreach ( $records as $record ) {
+			$_tmp       = array();
 			$_tmp['id'] = $record->getID();
-			foreach ($this->fields as $_fieldName => $_fieldAttribs) {
-				$_functionName = 'get' . ucfirst($_fieldName);
-				$_tmp[$_fieldName] = $record->$_functionName();
+			foreach ( $this->fields as $_fieldName => $_fieldAttribs ) {
+				$_functionName       = 'get' . ucfirst( $_fieldName );
+				$_tmp[ $_fieldName ] = $record->$_functionName();
 			}
 			$return[] = $_tmp;
 		}
+
 		return $return;
 	}
 
 	/**
 	 * List table fields
+	 *
 	 * @param $tablename
+	 *
 	 * @return array
 	 */
-	private function getTableFieldsName($tablename)
-	{
-		$_fields = $this->getTableFields($tablename);
-		$_return = array_keys($_fields);
+	private function getTableFieldsName( $tablename ) {
+		$_fields = $this->getTableFields( $tablename );
+		$_return = array_keys( $_fields );
+
 		return $_return;
 	}
 
 	/**
 	 * List table fields name
+	 *
 	 * @param $tablename
+	 *
 	 * @return array
 	 */
-	private function getTableFields($tablename)
-	{
-		$_return = array();
-		$_prepare = $this->prepare('DESCRIBE ' . $tablename . ' ');
+	private function getTableFields( $tablename ) {
+		$_return  = array();
+		$_prepare = $this->prepare( 'DESCRIBE ' . $tablename . ' ' );
 		$_prepare->execute();
-		foreach ($_prepare->fetchAll(\PDO::FETCH_ASSOC) as $_record) {
-			$_return[$_record['Field']] = array(
+		foreach ( $_prepare->fetchAll( \PDO::FETCH_ASSOC ) as $_record ) {
+			$_return[ $_record['Field'] ] = array(
 				'name' => $_record['Field'],
 				'type' => $_record['Type']
 			);
 		}
-		return ($_return);
+
+		return ( $_return );
 	}
 
 	/**
 	 * Export current Table to SQL script
+	 *
 	 * @param $tableName
 	 */
-	public function exportTable($tableName)
-	{
+	public function exportTable( $tableName ) {
 		$_filename = $this->_exportPath . $tableName . '.sql';
-		Storage::removeFile($_filename);
-		file_put_contents($_filename, $this->createTable($tableName), FILE_APPEND | LOCK_EX);
-		$_fieldsName = $this->getTableFieldsName($tableName);
-		$_sql_header = 'INSERT INTO ' . $tableName . ' (' . implode(',', $_fieldsName) . ') VALUES (\'';
-		foreach ($this->getTableRecords($tableName) as $_record) {
-			$_sql = $_sql_header . implode('\',\'', $_record) . '\');' . PHP_EOL;
-			file_put_contents($_filename, $_sql, FILE_APPEND | LOCK_EX);
+		Storage::removeFile( $_filename );
+		file_put_contents( $_filename, $this->createTable( $tableName ), FILE_APPEND | LOCK_EX );
+		$_fieldsName = $this->getTableFieldsName( $tableName );
+		$_sql_header = 'INSERT INTO ' . $tableName . ' (' . implode( ',', $_fieldsName ) . ') VALUES (\'';
+		foreach ( $this->getTableRecords( $tableName ) as $_record ) {
+			$_sql = $_sql_header . implode( '\',\'', $_record ) . '\');' . PHP_EOL;
+			file_put_contents( $_filename, $_sql, FILE_APPEND | LOCK_EX );
 		}
 	}
 
 	/**
 	 * List Table record for Export
+	 *
 	 * @param $tablename
+	 *
 	 * @return array
 	 */
-	private function getTableRecords($tablename)
-	{
-		$_prepare = $this->prepare('SELECT * FROM ' . $tablename . ' ');
+	private function getTableRecords( $tablename ) {
+		$_prepare = $this->prepare( 'SELECT * FROM ' . $tablename . ' ' );
 		$_prepare->execute();
-		$_return = $_prepare->fetchAll(\PDO::FETCH_ASSOC);
-		return ($_return);
+		$_return = $_prepare->fetchAll( \PDO::FETCH_ASSOC );
+
+		return ( $_return );
 	}
 
 	/**
 	 * Export current tables
 	 */
-	public function exportData()
-	{
-		foreach ($this->_export_tables as $_export_table) {
-			$this->exportTable($_export_table);
+	public function exportData() {
+		foreach ( $this->_export_tables as $_export_table ) {
+			$this->exportTable( $_export_table );
 		}
-		foreach ($this->_export_dirs as $_export_dir) {
-			$this->exportDir($_export_dir);
+		foreach ( $this->_export_dirs as $_export_dir ) {
+			$this->exportDir( $_export_dir );
 		}
 
 	}
 
 	/**
 	 * Export the table image dir
+	 *
 	 * @param $dir
 	 */
-	private function exportDir($dir)
-	{
-		storage::createZIPfromDir($dir, '_export' . DIRECTORY_SEPARATOR . $dir . '.zip');
+	private function exportDir( $dir ) {
+		storage::createZIPfromDir( $dir, '_export' . DIRECTORY_SEPARATOR . $dir . '.zip' );
 	}
 
-	public function getClassName()
-	{
+	public function getClassName() {
 		return $this->className;
 	}
 

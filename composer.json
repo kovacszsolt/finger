@@ -1,17 +1,21 @@
 {
-    "name": "kovacszsolt/finger",
-    "type": "library",
-    "description": "Finger Framework for Finger CMS",
-    "keywords": ["cms","orm"],
-    "homepage": "https://github.com/kovacszsolt/finger",
-    "license": "MIT",
-    "require": {
-        "swiftmailer/swiftmailer": "^5.4"
-    },
-    "authors": [
-        {
-            "name": "Kovács Zsolt",
-            "email": "smith.zsolt@gmail.com"
-        }
-    ]
+  "name": "kovacszsolt/finger",
+  "type": "library",
+  "description": "Finger Framework for Finger CMS",
+  "keywords": [
+    "cms",
+    "orm"
+  ],
+  "homepage": "https://github.com/kovacszsolt/finger",
+  "license": "MIT",
+  "require": {
+    "php": ">=7.1.0",
+    "swiftmailer/swiftmailer": "^5.4"
+  },
+  "authors": [
+    {
+      "name": "Kovács Zsolt",
+      "email": "smith.zsolt@gmail.com"
+    }
+  ]
 }

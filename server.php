@@ -1,4 +1,5 @@
 <?php
+
 namespace finger;
 
 use finger\log;
@@ -30,7 +31,7 @@ class server
 	{
 		// check host name maybe CLI?
 		if (isset($_SERVER['HTTP_HOST'])) {
-			$_return = $_SERVER['HTTP_HOST'];
+			$_return = str_replace(':', '_', $_SERVER['HTTP_HOST']);
 		} elseif ((defined('HTTP_HOST'))) {
 			$_return = HTTP_HOST;
 		}
@@ -42,18 +43,28 @@ class server
 	}
 
 
-	public static function uri(){
+	/**
+	 * Get Current URI
+	 * @return bool|string
+	 */
+	public static function uri()
+	{
 		$_return = $_SERVER['REQUEST_URI'];
-		if (substr($_return, 0,1) == '/') {
-			$_return =substr($_return,1);
+		if (substr($_return, 0, 1) == '/') {
+			$_return = substr($_return, 1);
 		}
 		if (substr($_return, -1) != '/') {
-			$_return .='/';
+			$_return .= '/';
 		}
 		return $_return;
 	}
 
-	public static function method() {
+	/**
+	 * Get Current Method
+	 * @return string
+	 */
+	public static function method()
+	{
 		$_return = ucfirst(strtolower($_SERVER['REQUEST_METHOD']));
 		return $_return;
 	}
