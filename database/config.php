@@ -11,17 +11,20 @@ class config extends \finger\config
 {
 
 
-    public $hostname = '';
-    public $databasename = '';
-    public $username = '';
-    public $password = '';
+	public $hostname = '';
+	public $databasename = '';
+	public $username = '';
+	public $password = '';
 
-    public function __construct()
-    {
-        parent::__construct('database');
-        $this->hostname = $this->get('hostname');
-        $this->databasename = $this->get('databasename');
-        $this->username = $this->get('username');
-        $this->password = $this->get('password');
-    }
+	/**
+	 * config constructor.
+	 */
+	public function __construct()
+	{
+		parent::__construct('database');
+		$this->hostname = $this->get('hostname');
+		$this->databasename = $this->get('databasename');
+		$this->username = $this->get('username');
+		$this->password = $this->get('password');
+	}
 }

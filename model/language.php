@@ -13,6 +13,9 @@ use \model\web\url\record as urlRecord;
 class language extends \finger\database\main
 {
 
+	/**
+	 * language constructor.
+	 */
 	public function __construct()
 	{
 		$this->fields['rootid'] = array('type' => 'int(10)');
@@ -68,6 +71,9 @@ class language extends \finger\database\main
 		return $_return;
 	}
 
+	/**
+	 * Install method
+	 */
 	public function install()
 	{
 
