@@ -182,11 +182,13 @@ class storage {
 		$_filename  = self::getStoragePath();
 		$__filename = $_filename . $fileName;
 		if ( ! is_file( $__filename ) ) {
-			$__filename = server::documentRoot() . '../storage/' . request::get( '_module' ) . '/default.jpg';
+			$_config    = new \finger\config( 'settings' );
+			$__filename = server::documentRoot() . $_config->get( 'social.defaultimage' );
 		}
 		$imginfo = getimagesize( $__filename );
 		if ( ! is_array( $imginfo ) ) {
-			$__filename = server::documentRoot() . '../storage/' . request::get( '_module' ) . '/default.jpg';
+			$_config    = new \finger\config( 'settings' );
+			$__filename = server::documentRoot() . $_config->get( 'social.defaultimage' );
 			$imginfo    = getimagesize( $__filename );
 		}
 		header( 'Content-type: ' . $imginfo['mime'] );
