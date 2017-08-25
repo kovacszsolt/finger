@@ -7,6 +7,7 @@ use \finger\request as request;
 use \finger\random as random;
 use \finger\config as config;
 
+
 class field {
 	private $name;
 	private $required;
@@ -91,10 +92,18 @@ class field {
 	private function checkGCaptcha() {
 		$_return = false;
 
-		$_config_secure = $this->_config['googlecaptcaptchasecret'];
-		$secret         = $this->_config['googlecaptcaptchasecret'];
-		$verifyResponse = file_get_contents( 'https://www.google.com/recaptcha/api/siteverify?secret=' . $secret . '&response=' . request::get( 'g-recaptcha-response', '' ) );
-		$responseData   = json_decode( $verifyResponse );
+		$data = array(
+			'secret'   => $this->_config['googlecaptcaptchasecret'],
+			'response' => request::get( 'g-recaptcha-response', '' )
+		);
+
+		$verify = curl_init();
+		curl_setopt( $verify, CURLOPT_URL, "https://www.google.com/recaptcha/api/siteverify" );
+		curl_setopt( $verify, CURLOPT_POST, true );
+		curl_setopt( $verify, CURLOPT_POSTFIELDS, http_build_query( $data ) );
+		curl_setopt( $verify, CURLOPT_RETURNTRANSFER, true );
+		$response     = curl_exec( $verify );
+		$responseData = json_decode( $response );
 		if ( $responseData->success ) {
 			$_return = true;
 		}
@@ -138,7 +147,6 @@ class field {
 		if ( sizeof( $_valueArray ) == 2 ) {
 			$_keyPre = $this->_session->getValue( $_valueArray[0], '' );
 			if ( $_keyPre != '' ) {
-				//$this->_session->remove($_valueArray[0]);
 				if ( $_keyPre == $_valueArray[1] ) {
 					$_return = true;
 				}
