@@ -72,6 +72,7 @@ class request {
 				}
 			}
 		}
+
 		return $_return;
 
 	}
@@ -195,6 +196,7 @@ class request {
 
 	/**
 	 * Get Params
+	 *
 	 * @param int $number
 	 * @param string $default
 	 *
@@ -206,7 +208,16 @@ class request {
 		if ( isset( $_param[ $number ] ) ) {
 			$_return = $_param[ $number ];
 		}
+
 		return $_return;
+	}
+
+	/**
+	 * get Module name
+	 * @return int|string
+	 */
+	public static function getModule() {
+		return self::get( '_module' );
 	}
 
 }
