@@ -195,6 +195,15 @@ class request {
 
 
 	/**
+	 * Get Hostname with protocol
+	 * @return string
+	 */
+	public static function _getFullHost(): string {
+		return self::_getProtocol() . '://' . self::_getServerName();
+	}
+
+
+	/**
 	 * Get Params
 	 *
 	 * @param int $number
