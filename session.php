@@ -2,18 +2,16 @@
 
 namespace finger;
 
-use \finger\random as random;
-use \finger\request as request;
-
 /**
  * Session handler
  * @package finger
  */
 class session {
+
 	/**
-	 * session constructor.
+	 * Inicialization
 	 */
-	public function __construct() {
+	private static function _init() {
 		/**
 		 * Start Session if not started
 		 */
@@ -30,7 +28,8 @@ class session {
 	 *
 	 * @return null Value
 	 */
-	public function getValue( string $name, $default = null ) {
+	public static function get( string $name, $default = null ) {
+		self::_init();
 		$_return = $default;
 		if ( isset( $_SESSION[ $name ] ) ) {
 			$_return = $_SESSION[ $name ];
@@ -40,10 +39,20 @@ class session {
 	}
 
 	/**
+	 * Get all Session variable
+	 * @return mixed
+	 */
+	public static function getAll() {
+		self::_init();
+
+		return $_SESSION;
+	}
+
+	/**
 	 * Session ID
 	 * @return string
 	 */
-	public function getSessionID() {
+	public static function getSessionID() {
 		return session_id();
 	}
 
@@ -53,7 +62,8 @@ class session {
 	 * @param $name Name
 	 * @param $value Value
 	 */
-	public function setValue( string $name, $value ) {
+	public static function set( string $name, $value ) {
+		self::_init();
 		$_SESSION[ $name ] = $value;
 	}
 
@@ -62,7 +72,7 @@ class session {
 	 *
 	 * @param $name
 	 */
-	public function remove( string $name ) {
+	public static function remove( string $name ) {
 		if ( isset( $_SESSION[ $name ] ) ) {
 			unset( $_SESSION[ $name ] );
 		}
@@ -77,25 +87,26 @@ class session {
 	 *
 	 * @return null
 	 */
-	public function flash( string $name, $value = null ) {
+	public static function flash( string $name, $value = null
+	) {
 		$_name = 'flash.' . $name;
 		if ( is_null( $value ) ) {
-			$_return = $this->getValue( $_name, '' );
-			$this->remove( $_name );
+			$_return = self::get( $_name, '' );
+			self::remove( $_name );
 
 			return $_return;
 		} else {
-			$this->setValue( $_name, $value );
+			self::set( $_name, $value );
 		}
 	}
 
 	/**
 	 * Kill all Session value
 	 */
-	public function removeAll() {
+	public static function removeAll() {
 		if ( is_array( $_SESSION ) ) {
 			foreach ( $_SESSION as $session ) {
-				$this->remove( $session );
+				self::remove( $session );
 			}
 		}
 	}
