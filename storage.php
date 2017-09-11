@@ -24,7 +24,9 @@ class storage {
 	 * @return string
 	 */
 	public static function getStoragePath() {
-		return $_SERVER['DOCUMENT_ROOT'] . ( ( substr( $_SERVER['DOCUMENT_ROOT'], - 1 ) == '/' ) ? '' : DIRECTORY_SEPARATOR ) . '..' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR;
+		$_return = \finger\server::documentRoot() . ( ( substr( \finger\server::documentRoot(), - 1 ) == '/' ) ? '' : DIRECTORY_SEPARATOR ) . '..' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . \finger\request::getModule() . DIRECTORY_SEPARATOR;
+
+		return $_return;
 	}
 
 	/**
@@ -182,11 +184,13 @@ class storage {
 		$_filename  = self::getStoragePath();
 		$__filename = $_filename . $fileName;
 		if ( ! is_file( $__filename ) ) {
-			$__filename = server::documentRoot() . '../storage/' . request::get( '_module' ) . '/default.jpg';
+			$_config    = new \finger\config( 'settings' );
+			$__filename = server::documentRoot() . $_config->get( 'social.defaultimage' );
 		}
 		$imginfo = getimagesize( $__filename );
 		if ( ! is_array( $imginfo ) ) {
-			$__filename = server::documentRoot() . '../storage/' . request::get( '_module' ) . '/default.jpg';
+			$_config    = new \finger\config( 'settings' );
+			$__filename = server::documentRoot() . $_config->get( 'social.defaultimage' );
 			$imginfo    = getimagesize( $__filename );
 		}
 		header( 'Content-type: ' . $imginfo['mime'] );
@@ -245,4 +249,38 @@ class storage {
 			file_put_contents( $_filename, $content );
 		}
 	}
+
+	/**
+	 * Resize and save image
+	 *
+	 * @param $source
+	 * @param $target
+	 * @param $newwidth
+	 * @param $newheight
+	 */
+	public static function imageResize( $source, $target, $newwidth, $newheight ) {
+		$_souceFile  = self::getStoragePath() . DIRECTORY_SEPARATOR . $source;
+		$_targetFile = self::getStoragePath() . DIRECTORY_SEPARATOR . $target;
+		list( $source_width, $source_height ) = getimagesize( $_souceFile );
+		$target_image = imagecreatetruecolor( $newwidth, $newheight );
+		$source_image = imagecreatefromjpeg( $_souceFile );
+		imagecopyresized( $target_image, $source_image, 0, 0, 0, 0, $newwidth, $newheight, $source_width, $source_height );
+		imagejpeg( $target_image, $_targetFile, 80 );
+	}
+
+	/**
+	 * Save images
+	 *
+	 * @param $source
+	 * @param $targetPath
+	 * @param $targetName
+	 */
+	public static function saveImage( $source, $targetPath, $targetName ) {
+		$_originalPath = $targetPath . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'original' . DIRECTORY_SEPARATOR . $targetName;
+		$_minimalPath  = $targetPath . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'minimal' . DIRECTORY_SEPARATOR;
+		self::saveFile( $source, $_originalPath );
+		self::mkDir( $_minimalPath );
+		self::imageResize( $_originalPath, $_minimalPath . $targetName, 100, 100 );
+	}
+
 }

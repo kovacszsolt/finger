@@ -14,38 +14,42 @@ class html
 	 * @param bool $convertUTF8
 	 * @return array
 	 */
-    public static function getFacebookData($url, $convertUTF8 = false)
-    {
-        $_return = array(
-            'title' => '',
-            'descrition' => '',
-            'image' => ''
-        );
-        $page_content = file_get_contents($url);
-        $dom_obj = new \DOMDocument();
-        $dom_obj->loadHTML($page_content);
-        $meta_val = null;
-        foreach ($dom_obj->getElementsByTagName('meta') as $meta) {
-            switch ($meta->getAttribute('property')) {
-                case 'og:title' :
-                    $_return['title'] = ($convertUTF8) ? utf8_decode($meta->getAttribute('content')) : $meta->getAttribute('content');
-                    break;
-                case 'og:description' :
-                    $_return['descrition'] = ($convertUTF8) ? utf8_decode($meta->getAttribute('content')) : $meta->getAttribute('content');
-                    break;
-                case 'og:image' :
-                    $_return['image'] = ($convertUTF8) ? utf8_decode($meta->getAttribute('content')) : $meta->getAttribute('content');
-                    break;
-                case 'og:url':
-                case 'og:site_name':
-                case 'fb:app_id':
-                case '':
-                    break;
-                default:
-            }
+	public static function getFacebookData($url, $convertUTF8 = false)
+	{
+		$_return = array(
+			'title' => '',
+			'descrition' => '',
+			'image' => ''
+		);
+		$page_content = file_get_contents($url);
+		error_reporting( 0 );
+		ini_set( 'display_errors', 0 );
+		$dom_obj = new \DOMDocument();
+		$dom_obj->loadHTML($page_content);
+		$meta_val = null;
+		foreach ($dom_obj->getElementsByTagName('meta') as $meta) {
+			switch ($meta->getAttribute('property')) {
+				case 'og:title' :
+					$_return['title'] = ($convertUTF8) ? utf8_decode($meta->getAttribute('content')) : $meta->getAttribute('content');
+					break;
+				case 'og:description' :
+					$_return['descrition'] = ($convertUTF8) ? utf8_decode($meta->getAttribute('content')) : $meta->getAttribute('content');
+					break;
+				case 'og:image' :
+					$_return['image'] = ($convertUTF8) ? utf8_decode($meta->getAttribute('content')) : $meta->getAttribute('content');
+					break;
+				case 'og:url':
+				case 'og:site_name':
+				case 'fb:app_id':
+				case '':
+					break;
+				default:
+			}
 
-        }
-        return $_return;
-    }
+		}
+		error_reporting( E_ALL );
+		ini_set( 'display_errors', 1 );
+		return $_return;
+	}
 
 }

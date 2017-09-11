@@ -9,66 +9,66 @@ namespace finger\database;
 class where
 {
 
-    /**
-     * field name
-     * @var
-     */
-    private $fieldName;
+	/**
+	 * field name
+	 * @var
+	 */
+	private $fieldName;
 
-    /**
-     * field parameter
-     * @var
-     */
-    private $fieldParam;
+	/**
+	 * field parameter
+	 * @var
+	 */
+	private $fieldParam;
 
-    private $method = '=';
+	private $method = '=';
 
-    /**
-     * Set method
-     * @param bool $equal
-     */
-    public function setMethod($method = '=')
-    {
-        $this->method = $method;
-    }
+	/**
+	 * Set method
+	 * @param bool $equal
+	 */
+	public function setMethod($method = '=')
+	{
+		$this->method = $method;
+	}
 
-    public function getMethod() {
-        return $this->method;
-    }
+	public function getMethod() {
+		return $this->method;
+	}
 
-    /**
-     * Set Where field name
-     * @param $name
-     */
-    public function setName($name)
-    {
-        $this->fieldName = $name;
-    }
+	/**
+	 * Set Where field name
+	 * @param $name
+	 */
+	public function setName($name)
+	{
+		$this->fieldName = $name;
+	}
 
-    /**
-     * Get current Where field name
-     * @return mixed
-     */
-    public function getName()
-    {
-        return $this->fieldName;
-    }
+	/**
+	 * Get current Where field name
+	 * @return mixed
+	 */
+	public function getName()
+	{
+		return $this->fieldName;
+	}
 
-    /**
-     * Set Where parametere value
-     * @param $param
-     */
-    public function setParam($param)
-    {
-        $this->fieldParam = $param;
-    }
+	/**
+	 * Set Where parametere value
+	 * @param $param
+	 */
+	public function setParam($param)
+	{
+		$this->fieldParam = $param;
+	}
 
-    /**
-     * Get Where parameter value
-     * @return mixed
-     */
-    public function getParam()
-    {
-        return $this->fieldParam;
-    }
+	/**
+	 * Get Where parameter value
+	 * @return mixed
+	 */
+	public function getParam()
+	{
+		return $this->fieldParam;
+	}
 }

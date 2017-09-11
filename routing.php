@@ -84,7 +84,10 @@ class routing
 		$_return = str_replace('á', 'a', $_return);
 		$_return = str_replace('ű', 'u', $_return);
 		$_return = str_replace('í', 'i', $_return);
+		$_return = str_replace('–', '-', $_return);
 		$_return = str_replace(' ', '-', $_return);
+		$_return = str_replace(',', '', $_return);
+		$_return = str_replace('.', '', $_return);
 		$_return = str_replace(':', '', $_return);
 		return $_return;
 	}
