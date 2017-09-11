@@ -3,17 +3,22 @@
 namespace finger\social;
 
 use finger\request as request;
+use finger\session as session;
 
+/**
+ * Google Account Class
+ * @package finger\social
+ */
 class google {
 
 	private $_googleClass;
 	private $_accessToken = '';
 
+	/**
+	 * google constructor.
+	 */
 	public function __construct() {
-		//$this->_session = new \finger\session();
 		$_configSocial = new \finger\config( 'social' );
-
-
 		$this->_googleClass = new \Google_Client();
 		$this->_googleClass->setApplicationName( $_configSocial->get( 'google.applicationname' ) );
 		$this->_googleClass->setClientId( $_configSocial->get( 'google.clientid' ) );
@@ -21,10 +26,20 @@ class google {
 		$this->_googleClass->setScopes( explode( ';', $_configSocial->get( 'google.scope' ) ) );
 	}
 
+	/**
+	 * Set Redirect URL for Login
+	 * @param string $url
+	 */
 	public function setRedirectUri( string $url ) {
 		$this->_googleClass->setRedirectUri( $url );
 	}
 
+	/**
+	 * Read redirect URL
+	 * @param string $url
+	 *
+	 * @return string
+	 */
 	public function getRedirectURL( string $url ) {
 		$this->setRedirectUri( $url );
 		$_return = $this->_googleClass->createAuthUrl();
@@ -32,6 +47,10 @@ class google {
 		return $_return;
 	}
 
+	/**
+	 * Get Access Token
+	 * @return string
+	 */
 	public function getToken() {
 		if ( $this->_accessToken == '' ) {
 			$this->_accessToken = $this->_googleClass->authenticate( request::get( 'code', '' ) );
@@ -40,10 +59,18 @@ class google {
 		return $this->_accessToken;
 	}
 
+	/**
+	 * Set Access Token
+	 * @param string $token
+	 */
 	public function setToken( string $token ) {
 		$this->_googleClass->setAccessToken( $token );
 	}
 
+	/**
+	 * Get Current User Attributes
+	 * @return mixed
+	 */
 	public function getAttributes() {
 		if ( is_null( $this->_googleClass->getAccessToken() ) ) {
 			$this->setToken( \finger\session::get( 'googlesession', '' ) );
@@ -54,12 +81,12 @@ class google {
 		return $_return;
 	}
 
-	public function xxx() {
-		var_dump( $this->_googleClass->verifyIdToken()->getAttributes() );
-		exit;
-		var_dump( $_SESSION );
-		var_dump( $this->_googleClass->getAccessToken() );
-		exit;
+	/**
+	 * Logout
+	 */
+	public function logout() {
+		session::remove( 'googlesession' );
+		$this->_accessToken = '';
 	}
 
 }

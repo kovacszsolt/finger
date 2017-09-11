@@ -2,6 +2,11 @@
 
 namespace finger\social;
 use \finger\session as session;
+
+/**
+ * Facebook Class
+ * @package finger\social
+ */
 class facebook {
 
 	private $_facebookClass;
@@ -10,6 +15,9 @@ class facebook {
 	private $ApplicationID;
 	private $SecretID;
 
+	/**
+	 * facebook constructor.
+	 */
 	public function __construct() {
 		$_configSocial  = new \finger\config( 'social' );
 
@@ -25,7 +33,9 @@ class facebook {
 		}
 	}
 
-
+	/**
+	 * Get Facebook Access Token
+	 */
 	private function getAccessToken() {
 		$this->_accessToken = session::get( 'facebook_access_token', '' );
 		try {
@@ -44,24 +54,30 @@ class facebook {
 		}
 	}
 
-
+	/**
+	 * Get Current User Data
+	 * @return array|null
+	 */
 	public function getMe() {
 		try {
-
-
 			$_return = null;
 			if ( ! is_null( $this->_accessToken ) ) {
 				$profile_request = $this->_facebookClass->get( '/me?fields=name,first_name,last_name,email' );
 				$profile         = $profile_request->getGraphNode()->asArray();
 				$_return         = $profile;
 			}
-
 			return $_return;
 		} catch ( \Facebook\Exceptions\FacebookResponseException $e ) {
 			return $_return;
 		}
 	}
 
+	/**
+	 * Get Facebook login URL
+	 * @param string $backURL
+	 *
+	 * @return string
+	 */
 	public function getLoginURL( $backURL = '/loginok/' ) {
 		$permissions = [ 'email' ]; // optional
 		$loginUrl    = $this->_helper->getLoginUrl( \finger\request::_getFullHost() . $backURL, $permissions );
@@ -70,39 +86,12 @@ class facebook {
 		return $loginUrl;
 	}
 
-
-	public function sendNotification() {
-
-		$app_access_token = $this->ApplicationID . '|' . $this->SecretID;
-		$response         = $this->_facebookClass->post( '/10211041450140088/notifications', array(
-
-			'template' => 'You have received a new message.',
-
-			'href' => 'https://greenroom.dev'
-		), $this->_accessToken );
-		print_r( $response );
-		exit;
-	}
-
-	public function postToWall( $url, $message ) {
-		$linkData = [
-			'link'    => $this->_host . $url,
-			'message' => $message,
-		];
-		$ret      = $this->_facebookClass->post( '/me/feed', $linkData, $this->_accessToken );
-	}
-
+	/**
+	 * Logout from facebook
+	 */
 	public function logout() {
 		session::remove( 'facebook_access_token' );
 		$this->_accessToken = '';
-	}
-
-	public function getPermissions() {
-		$response = $this->_facebookClass->get( '/me/permissions', $this->_accessToken );
-
-		$graphObject = $response->getGraphEdge();
-		print_r( $graphObject );
-		exit;
 	}
 
 }
