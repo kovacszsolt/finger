@@ -11,9 +11,9 @@ use \finger\database\config as config;
 class mysql extends \PDO
 {
 
-    /**
-     * mysql constructor.
-     */
+	/**
+	 * mysql constructor.
+	 */
 	public function __construct()
 	{
 		try {
@@ -31,23 +31,23 @@ class mysql extends \PDO
 		}
 	}
 
-    /**
-     * Create table MYSQL syntax
-     * @param $fields
-     */
-    protected function createtable($fields)
-    {
+	/**
+	 * Create table MYSQL syntax
+	 * @param $fields
+	 */
+	protected function createtable($fields)
+	{
 
-        $sql = "CREATE TABLE IF NOT EXISTS " . $this->tableName . "( ";
-        $sql .= " id INT(11) NOT NULL AUTO_INCREMENT ";
-        $sql .= " ,inorder INT(11) ";
-        foreach ($fields as $name => $attribs) {
-            $type = $attribs['type'];
-            $sql .= "," . $name . " " . $type . " ";
-        }
-        $sql .= " ,createdate TIMESTAMP ";
-        $sql .= " ,createhost VARCHAR(20) ";
-        $sql .= ", PRIMARY KEY (id) )";
-        $query = $this->exec($sql);
-    }
+		$sql = "CREATE TABLE IF NOT EXISTS " . $this->tableName . "( ";
+		$sql .= " id INT(11) NOT NULL AUTO_INCREMENT ";
+		$sql .= " ,inorder INT(11) ";
+		foreach ($fields as $name => $attribs) {
+			$type = $attribs['type'];
+			$sql .= "," . $name . " " . $type . " ";
+		}
+		$sql .= " ,createdate TIMESTAMP ";
+		$sql .= " ,createhost VARCHAR(20) ";
+		$sql .= ", PRIMARY KEY (id) )";
+		$query = $this->exec($sql);
+	}
 }

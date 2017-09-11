@@ -4,6 +4,7 @@ namespace finger\controller;
 
 use finger\config;
 use finger\form\check as form;
+use finger\session as session;
 
 /**
  * Class frontend main class
@@ -11,25 +12,25 @@ use finger\form\check as form;
  */
 class  front extends \finger\controller\main
 {
-	/**
-	 * current language
-	 * @var string
-	 */
-	protected $currentLang;
+    /**
+     * current language
+     * @var string
+     */
+    protected $currentLang;
 
-	/**
-	 * Form handler class
-	 * @var form
-	 */
-	protected $_form;
+    /**
+     * Form handler class
+     * @var form
+     */
+    protected $_form;
 
-	/**
-	 * front constructor.
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-		$this->_form = new form();
-		$this->currentLang = $this->session->getValue('currentLang', $this->settings['defaultlangcode']);
-	}
+    /**
+     * front constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->_form = new form();
+        $this->currentLang = $this->session->getValue('currentLang', $this->settings['defaultlangcode']);
+    }
 }

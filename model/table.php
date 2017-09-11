@@ -7,5 +7,5 @@ namespace finger\model;
  * @package finger\model
  */
 class table extends \finger\database\main {
-    
+
 }

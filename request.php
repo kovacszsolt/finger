@@ -72,7 +72,6 @@ class request {
 				}
 			}
 		}
-
 		return $_return;
 
 	}
@@ -217,7 +216,6 @@ class request {
 		if ( isset( $_param[ $number ] ) ) {
 			$_return = $_param[ $number ];
 		}
-
 		return $_return;
 	}
 
@@ -225,8 +223,50 @@ class request {
 	 * get Module name
 	 * @return int|string
 	 */
-	public static function getModule() {
+	public static function getModule(): string {
 		return self::get( '_module' );
 	}
 
+	/**
+	 * Get current Controller name
+	 * @return string
+	 */
+	public static function getController(): string {
+		return self::get( '_controller' );
+	}
+
+	/**
+	 * Get current Action name
+	 * @return string
+	 */
+	public static function getAction(): string {
+		return self::get( '_action' );
+	}
+
+	/**
+	 * Get current Method
+	 * @return string
+	 */
+	public static function getMethod(): string {
+		return self::get( '_method' );
+	}
+
+	/**
+	 * Page redirection
+	 *
+	 * @param string $url
+	 */
+	public static function redirect( string $url ) {
+		header( 'Location: ' . $url );
+		die();
+	}
+
+	/**
+	 * get current uri
+	 * module/controller/action/method
+	 * @return string
+	 */
+	public static function getRouting(): string {
+		return self::getModule() . '/' . self::getController() . '/' . self::getAction() . '/' . self::getMethod() . '/' . \finger\server::method();
+	}
 }

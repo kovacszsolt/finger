@@ -12,12 +12,6 @@ use \finger\config as config;
 abstract class main {
 
 	/**
-	 * Current Session
-	 * @var session
-	 */
-	protected $session;
-
-	/**
 	 * Current module name
 	 * @var
 	 */
@@ -75,7 +69,6 @@ abstract class main {
 		$tmp             = new config( 'settings' );
 		$this->settings  = $tmp->getAll();
 		$this->languages = $tmp->get( 'languages' );
-		$this->session   = new session();
 		$this->view      = new \finger\view\render();
 		$this->view->addValue( 'languages', $this->languages );
 		$this->_module     = request::get( '_module' );
@@ -97,7 +90,7 @@ abstract class main {
 	 * Get Flash message
 	 */
 	public function messageGet() {
-		$_message = $this->session->flash( 'message' );
+		$_message = session::flash( 'message' );
 		$this->view->renderJSON( array( 'message' => $_message ) );
 	}
 

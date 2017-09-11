@@ -198,7 +198,7 @@ class main extends \finger\database\mysql {
 	 *
 	 * @return mixed
 	 */
-	public function findKey( $keyname ) {
+	public function findKey( string $keyname ) {
 		$_getClassName = $this->_getClassName();
 		$_return       = new $_getClassName();
 		$this->addWhere( 'keyname', $keyname );
