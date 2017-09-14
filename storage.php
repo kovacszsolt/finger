@@ -263,9 +263,18 @@ class storage {
 		$_targetFile = self::getStoragePath() . DIRECTORY_SEPARATOR . $target;
 		list( $source_width, $source_height ) = getimagesize( $_souceFile );
 		$target_image = imagecreatetruecolor( $newwidth, $newheight );
-		$source_image = imagecreatefromjpeg( $_souceFile );
-		imagecopyresized( $target_image, $source_image, 0, 0, 0, 0, $newwidth, $newheight, $source_width, $source_height );
-		imagejpeg( $target_image, $_targetFile, 80 );
+		switch (exif_imagetype($_souceFile)) {
+			case 2:
+				$source_image = imagecreatefromjpeg( $_souceFile );
+				imagecopyresized( $target_image, $source_image, 0, 0, 0, 0, $newwidth, $newheight, $source_width, $source_height );
+				imagejpeg( $target_image, $_targetFile, 80 );
+				break;
+			case 3:
+				$source_image = imagecreatefrompng( $_souceFile );
+				imagecopyresized( $target_image, $source_image, 0, 0, 0, 0, $newwidth, $newheight, $source_width, $source_height );
+				imagepng( $target_image, $_targetFile, 6 );
+				break;
+		}
 	}
 
 	/**
