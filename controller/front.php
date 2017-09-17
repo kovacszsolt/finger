@@ -31,6 +31,6 @@ class  front extends \finger\controller\main
     {
         parent::__construct();
         $this->_form = new form();
-        $this->currentLang = $this->session->getValue('currentLang', $this->settings['defaultlangcode']);
+	    $this->currentLang = session::get( 'currentLang', $this->settings['defaultlangcode'] );
     }
 }
