@@ -72,6 +72,7 @@ class request {
 				}
 			}
 		}
+
 		return $_return;
 
 	}
@@ -216,6 +217,7 @@ class request {
 		if ( isset( $_param[ $number ] ) ) {
 			$_return = $_param[ $number ];
 		}
+
 		return $_return;
 	}
 
@@ -244,7 +246,16 @@ class request {
 	}
 
 	/**
-	 * Get current Method
+	 * set current Module
+	 *
+	 * @param $value
+	 */
+	public static function setModule( $value ) {
+		self::set( '_module', $value );
+	}
+
+	/**
+	 * Get current Module
 	 * @return string
 	 */
 	public static function getMethod(): string {
